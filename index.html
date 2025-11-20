@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Auto-AI - AI 기반 업무 자동화 플랫폼. 자동으로 굴러가는 회사를 만듭니다.">
+    <meta name="keywords" content="AI, 자동화, 업무자동화, Gemini, 비즈니스">
+    <title>Auto-AI - Business Automation Platform</title>
+    <link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🤖 Auto-AI</h1>
+            <p class="subtitle">자동으로 굴러가는 회사 - AI 기반 업무 자동화 플랫폼</p>
+            <div class="header-buttons">
+                <a href="https://github.com/hwkim3330/auto-ai" target="_blank" class="btn-primary">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
+                    </svg>
+                    GitHub
+                </a>
+                <button onclick="scrollToDemo()" class="btn-secondary">데모 보기</button>
+            </div>
+        </header>
+
+        <section class="features-section">
+            <h2>🎯 핵심 기능</h2>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">📊</div>
+                    <h3>문서 자동화</h3>
+                    <p>보고서, 이메일, 회의록을 AI가 자동으로 생성합니다.</p>
+                    <ul>
+                        <li>일일/주간/월간 보고서</li>
+                        <li>이메일 자동 작성</li>
+                        <li>회의록 자동 생성</li>
+                        <li>제안서 작성</li>
+                    </ul>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon">⚙️</div>
+                    <h3>업무 플로우 자동화</h3>
+                    <p>반복적인 업무를 자동화하여 생산성을 극대화합니다.</p>
+                    <ul>
+                        <li>스케줄 기반 자동 실행</li>
+                        <li>프로젝트 관리 자동화</li>
+                        <li>승인 프로세스 자동화</li>
+                        <li>마감일 자동 관리</li>
+                    </ul>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon">📈</div>
+                    <h3>데이터 분석</h3>
+                    <p>비즈니스 데이터를 자동으로 분석하고 인사이트를 제공합니다.</p>
+                    <ul>
+                        <li>매출 데이터 분석</li>
+                        <li>트렌드 예측</li>
+                        <li>대시보드 자동 생성</li>
+                        <li>이상 탐지 및 알림</li>
+                    </ul>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon">💬</div>
+                    <h3>커뮤니케이션 자동화</h3>
+                    <p>이메일, 메신저 등 커뮤니케이션을 자동화합니다.</p>
+                    <ul>
+                        <li>이메일 자동 응답</li>
+                        <li>Slack/Teams 통합</li>
+                        <li>회의 일정 조율</li>
+                        <li>알림 자동 발송</li>
+                    </ul>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon">🤖</div>
+                    <h3>AI 의사결정 지원</h3>
+                    <p>AI가 데이터를 분석하여 최적의 의사결정을 제안합니다.</p>
+                    <ul>
+                        <li>시나리오 시뮬레이션</li>
+                        <li>리스크 분석</li>
+                        <li>최적화 솔루션</li>
+                        <li>예측 모델링</li>
+                    </ul>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon">🔒</div>
+                    <h3>보안 & 모니터링</h3>
+                    <p>안전하고 투명한 자동화 시스템을 제공합니다.</p>
+                    <ul>
+                        <li>실시간 모니터링</li>
+                        <li>감사 로그</li>
+                        <li>권한 관리</li>
+                        <li>데이터 암호화</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <section class="demo-section" id="demo">
+            <h2>🎮 라이브 데모</h2>
+            <p class="demo-description">실제로 AI 자동화를 체험해보세요 (데모 모드)</p>
+
+            <div class="demo-container">
+                <div class="demo-panel">
+                    <h3>💬 AI 챗봇</h3>
+                    <div class="chat-container">
+                        <div id="chat-messages" class="chat-messages">
+                            <div class="chat-message ai">
+                                안녕하세요! Auto-AI 데모 챗봇입니다. 무엇을 도와드릴까요?
+                            </div>
+                        </div>
+                        <div class="chat-input-container">
+                            <input
+                                type="text"
+                                id="chat-input"
+                                placeholder="메시지를 입력하세요..."
+                                class="chat-input"
+                            >
+                            <button onclick="sendDemoMessage()" class="btn-primary">전송</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="demo-panel">
+                    <h3>📊 자동 보고서 생성</h3>
+                    <div class="report-generator">
+                        <div class="input-group">
+                            <label>매출액 (원):</label>
+                            <input type="number" id="sales" value="15000000" class="demo-input">
+                        </div>
+                        <div class="input-group">
+                            <label>신규 고객 수:</label>
+                            <input type="number" id="customers" value="45" class="demo-input">
+                        </div>
+                        <div class="input-group">
+                            <label>완료된 작업:</label>
+                            <input type="number" id="tasks" value="23" class="demo-input">
+                        </div>
+                        <button onclick="generateDemoReport()" class="btn-primary full-width">
+                            📝 일일 보고서 생성
+                        </button>
+                        <div id="report-output" class="output-area"></div>
+                    </div>
+                </div>
+
+                <div class="demo-panel">
+                    <h3>📧 이메일 자동 작성</h3>
+                    <div class="email-generator">
+                        <div class="input-group">
+                            <label>목적:</label>
+                            <select id="email-purpose" class="demo-input">
+                                <option value="프로젝트 제안">프로젝트 제안</option>
+                                <option value="회의 요청">회의 요청</option>
+                                <option value="진행 상황 보고">진행 상황 보고</option>
+                                <option value="감사 인사">감사 인사</option>
+                            </select>
+                        </div>
+                        <div class="input-group">
+                            <label>수신자:</label>
+                            <input type="text" id="recipient" value="김대리" class="demo-input">
+                        </div>
+                        <button onclick="generateDemoEmail()" class="btn-primary full-width">
+                            ✉️ 이메일 생성
+                        </button>
+                        <div id="email-output" class="output-area"></div>
+                    </div>
+                </div>
+
+                <div class="demo-panel">
+                    <h3>⏰ 예정된 자동화 작업</h3>
+                    <div class="tasks-list">
+                        <div class="task-item">
+                            <div class="task-icon">📊</div>
+                            <div class="task-info">
+                                <h4>일일 아침 브리핑</h4>
+                                <p>매일 오전 9:00</p>
+                                <span class="task-status active">활성</span>
+                            </div>
+                        </div>
+                        <div class="task-item">
+                            <div class="task-icon">📧</div>
+                            <div class="task-info">
+                                <h4>이메일 자동 분류</h4>
+                                <p>매 30분마다</p>
+                                <span class="task-status active">활성</span>
+                            </div>
+                        </div>
+                        <div class="task-item">
+                            <div class="task-icon">📝</div>
+                            <div class="task-info">
+                                <h4>주간 리포트 생성</h4>
+                                <p>매주 월요일 10:00</p>
+                                <span class="task-status active">활성</span>
+                            </div>
+                        </div>
+                        <div class="task-item">
+                            <div class="task-icon">📈</div>
+                            <div class="task-info">
+                                <h4>월간 성과 분석</h4>
+                                <p>매월 1일 10:00</p>
+                                <span class="task-status active">활성</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="tech-section">
+            <h2>🔧 기술 스택</h2>
+            <div class="tech-grid">
+                <div class="tech-item">
+                    <h3>AI/ML</h3>
+                    <p>Google Gemini API</p>
+                </div>
+                <div class="tech-item">
+                    <h3>Backend</h3>
+                    <p>Python, FastAPI</p>
+                </div>
+                <div class="tech-item">
+                    <h3>Frontend</h3>
+                    <p>HTML5, CSS3, JavaScript</p>
+                </div>
+                <div class="tech-item">
+                    <h3>Automation</h3>
+                    <p>APScheduler</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="install-section">
+            <h2>🚀 설치 및 실행</h2>
+            <div class="code-block">
+                <pre><code># 저장소 클론
+git clone https://github.com/hwkim3330/auto-ai.git
+cd auto-ai
+
+# 의존성 설치
+pip install -r requirements.txt
+
+# 설정 파일 생성
+cp config/config.example.yaml config/config.yaml
+# config.yaml에 Gemini API 키 입력
+
+# 서버 실행
+python src/main.py
+
+# 브라우저에서 접속
+# http://localhost:8000</code></pre>
+            </div>
+        </section>
+
+        <section class="cta-section">
+            <h2>지금 바로 시작하세요</h2>
+            <p>AI가 만드는 자동화된 업무 환경을 경험해보세요</p>
+            <div class="cta-buttons">
+                <a href="https://github.com/hwkim3330/auto-ai" target="_blank" class="btn-large btn-primary">
+                    GitHub에서 보기
+                </a>
+                <button onclick="scrollToDemo()" class="btn-large btn-secondary">
+                    데모 체험하기
+                </button>
+            </div>
+        </section>
+
+        <footer>
+            <div class="footer-content">
+                <p>🤖 <strong>Auto-AI</strong> - AI가 AI를 만들어 사람을 자유롭게 합니다</p>
+                <p class="footer-links">
+                    <a href="https://github.com/hwkim3330/auto-ai" target="_blank">GitHub</a> •
+                    <a href="https://github.com/hwkim3330/auto-ai/issues" target="_blank">Issues</a> •
+                    <a href="#demo">Demo</a>
+                </p>
+                <p class="copyright">© 2025 Auto-AI. MIT License.</p>
+            </div>
+        </footer>
+    </div>
+
+    <script src="assets/js/demo.js"></script>
+</body>
+</html>
