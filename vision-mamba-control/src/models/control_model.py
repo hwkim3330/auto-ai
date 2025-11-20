@@ -222,10 +222,10 @@ class VisionMambaControl(nn.Module):
         frame_norm = frame_resized.astype(np.float32) / 255.0
 
         # To tensor (B, C, H, W)
-        image_tensor = torch.from_numpy(frame_norm).permute(2, 0, 1).unsqueeze(0)
+        image_tensor = torch.from_numpy(frame_norm).permute(2, 0, 1).unsqueeze(0).float()
 
         # Camera stats
-        camera_stats_tensor = torch.tensor([[brightness, contrast, saturation]])
+        camera_stats_tensor = torch.tensor([[brightness, contrast, saturation]], dtype=torch.float32)
 
         # Predict
         with torch.no_grad():
