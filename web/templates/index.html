@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Auto-AI - Business Automation Platform</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🤖 Auto-AI</h1>
+            <p>자동으로 굴러가는 회사 - AI 기반 업무 자동화 플랫폼</p>
+        </header>
+
+        <main>
+            <div class="status-panel">
+                <h2>시스템 상태</h2>
+                <div id="system-status" class="status-grid">
+                    <div class="status-item">
+                        <span class="status-label">AI 엔진:</span>
+                        <span id="ai-status" class="status-value">확인 중...</span>
+                    </div>
+                    <div class="status-item">
+                        <span class="status-label">스케줄러:</span>
+                        <span id="scheduler-status" class="status-value">확인 중...</span>
+                    </div>
+                    <div class="status-item">
+                        <span class="status-label">문서 에이전트:</span>
+                        <span id="document-status" class="status-value">확인 중...</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="panel">
+                <h2>예정된 작업</h2>
+                <div id="tasks-list" class="tasks-container">
+                    작업 로딩 중...
+                </div>
+            </div>
+
+            <div class="panel">
+                <h2>AI 챗봇</h2>
+                <div class="chat-container">
+                    <div id="chat-messages" class="chat-messages"></div>
+                    <div class="chat-input-container">
+                        <input
+                            type="text"
+                            id="chat-input"
+                            placeholder="메시지를 입력하세요..."
+                            class="chat-input"
+                        >
+                        <button onclick="sendMessage()" class="btn-primary">전송</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="actions-panel">
+                <h2>빠른 작업</h2>
+                <div class="action-grid">
+                    <button onclick="generateDailyReport()" class="action-btn">
+                        📊 일일 보고서 생성
+                    </button>
+                    <button onclick="generateEmail()" class="action-btn">
+                        📧 이메일 작성
+                    </button>
+                    <button onclick="generateMeetingMinutes()" class="action-btn">
+                        📝 회의록 생성
+                    </button>
+                    <button onclick="analyzeData()" class="action-btn">
+                        📈 데이터 분석
+                    </button>
+                </div>
+            </div>
+        </main>
+
+        <footer>
+            <p>🤖 Powered by AI - Auto-AI는 AI가 AI를 만들어 사람을 자유롭게 합니다</p>
+        </footer>
+    </div>
+
+    <script src="/static/js/app.js"></script>
+</body>
+</html>

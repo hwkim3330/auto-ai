@@ -1,0 +1,82 @@
+# Auto-AI Configuration File
+
+# Gemini API 설정
+gemini:
+  api_key: "YOUR_GEMINI_API_KEY_HERE"
+  model: "gemini-pro"
+  temperature: 0.7
+  max_tokens: 2048
+
+# 서버 설정
+server:
+  host: "0.0.0.0"
+  port: 8000
+  debug: false
+
+# 스케줄러 설정
+scheduler:
+  timezone: "Asia/Seoul"
+  enabled: true
+
+# 문서 자동화 설정
+document_automation:
+  enabled: true
+  output_directory: "output/documents"
+  formats: ["md", "pdf", "docx"]
+
+# 이메일 설정
+email:
+  enabled: false
+  smtp_server: "smtp.gmail.com"
+  smtp_port: 587
+  use_tls: true
+  username: "your-email@gmail.com"
+  password: "your-password"
+  from_address: "your-email@gmail.com"
+
+# 슬랙 통합
+slack:
+  enabled: false
+  bot_token: "xoxb-your-slack-bot-token"
+  channel: "#general"
+
+# 데이터베이스 설정
+database:
+  url: "sqlite:///data/auto-ai.db"
+  # PostgreSQL 예시: "postgresql://user:password@localhost/auto-ai"
+
+# 로깅 설정
+logging:
+  level: "INFO"  # DEBUG, INFO, WARNING, ERROR
+  file: "logs/auto-ai.log"
+  rotation: "1 day"
+  retention: "7 days"
+
+# 보안 설정
+security:
+  secret_key: "change-this-to-a-random-secret-key"
+  api_key_required: false
+  allowed_hosts: ["*"]
+
+# 작업 설정
+tasks:
+  daily_report:
+    enabled: true
+    time: "09:00"
+  weekly_report:
+    enabled: true
+    day: "monday"  # monday, tuesday, etc.
+    time: "10:00"
+  monthly_report:
+    enabled: true
+    day: 1
+    time: "10:00"
+
+# AI 에이전트 설정
+agents:
+  document_agent:
+    enabled: true
+  data_agent:
+    enabled: true
+  communication_agent:
+    enabled: false
