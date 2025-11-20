@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CCTV Monitoring - Depth Anything V3</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', sans-serif;
+            background: #0a0a0a;
+            color: #f0f0f0;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 1920px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #ff6b6b 0%, #ee5a6f 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 8px;
+        }
+
+        .header p {
+            color: #888;
+            font-size: 1rem;
+        }
+
+        .main-grid {
+            display: grid;
+            grid-template-columns: 1fr 350px;
+            gap: 20px;
+        }
+
+        @media (max-width: 1200px) {
+            .main-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Video Section */
+        .video-section {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(20px);
+            border-radius: 20px;
+            padding: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .video-container {
+            position: relative;
+            width: 100%;
+            padding-bottom: 56.25%;
+            background: #000;
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        .video-container img {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+
+        .controls {
+            margin-top: 15px;
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+        }
+
+        .btn {
+            padding: 12px 28px;
+            border: none;
+            border-radius: 10px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
+            color: white;
+        }
+
+        .btn-danger {
+            background: linear-gradient(135deg, #f44336 0%, #e53935 100%);
+            color: white;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+        }
+
+        /* Sidebar */
+        .sidebar {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.04);
+            backdrop-filter: blur(20px);
+            border-radius: 16px;
+            padding: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .card-title {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 15px;
+            color: #fff;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Stats */
+        .stat-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+        }
+
+        .stat {
+            background: rgba(0, 0, 0, 0.2);
+            padding: 14px;
+            border-radius: 10px;
+        }
+
+        .stat-label {
+            font-size: 11px;
+            color: #888;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 6px;
+        }
+
+        .stat-value {
+            font-size: 22px;
+            font-weight: 700;
+            color: #fff;
+        }
+
+        .stat-value.green {
+            color: #4CAF50;
+        }
+
+        .stat-value.red {
+            color: #f44336;
+        }
+
+        .stat-value.orange {
+            color: #ff9800;
+        }
+
+        /* Alerts */
+        .alerts-list {
+            max-height: 200px;
+            overflow-y: auto;
+        }
+
+        .alert-item {
+            background: rgba(244, 67, 54, 0.1);
+            border-left: 3px solid #f44336;
+            padding: 10px;
+            border-radius: 6px;
+            margin-bottom: 8px;
+            font-size: 13px;
+            color: #ff9999;
+        }
+
+        .alert-item.warning {
+            background: rgba(255, 152, 0, 0.1);
+            border-left-color: #ff9800;
+            color: #ffb84d;
+        }
+
+        .no-alerts {
+            text-align: center;
+            color: #666;
+            padding: 20px;
+            font-size: 13px;
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 3px;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 3px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        /* Status Badge */
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .status-badge.active {
+            background: rgba(76, 175, 80, 0.2);
+            color: #4CAF50;
+        }
+
+        .status-badge.alert {
+            background: rgba(244, 67, 54, 0.2);
+            color: #f44336;
+        }
+
+        .status-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: currentColor;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <h1>🎥 CCTV Monitoring</h1>
+            <p>Depth Anything V3 + Person Detection</p>
+        </div>
+
+        <!-- Main Grid -->
+        <div class="main-grid">
+            <!-- Video Section -->
+            <div class="video-section">
+                <div class="video-container">
+                    <img id="videoFeed" src="/cctv/video_feed" alt="CCTV Feed" style="display: none;">
+                    <div class="video-placeholder" id="placeholder" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); text-align: center; color: #666;">
+                        <div style="font-size: 48px; margin-bottom: 12px;">📷</div>
+                        <div>카메라를 시작하세요</div>
+                    </div>
+                </div>
+
+                <div class="controls">
+                    <button class="btn btn-primary" onclick="startMonitoring()">▶ Start Monitoring</button>
+                    <button class="btn btn-danger" onclick="stopMonitoring()">⏹ Stop</button>
+                </div>
+            </div>
+
+            <!-- Sidebar -->
+            <div class="sidebar">
+                <!-- Statistics -->
+                <div class="card">
+                    <div class="card-title">
+                        📊 Statistics
+                    </div>
+                    <div class="stat-grid">
+                        <div class="stat">
+                            <div class="stat-label">Persons</div>
+                            <div class="stat-value green" id="totalPersons">0</div>
+                        </div>
+                        <div class="stat">
+                            <div class="stat-label">Avg Distance</div>
+                            <div class="stat-value" id="avgDistance">0.0m</div>
+                        </div>
+                        <div class="stat">
+                            <div class="stat-label">Avg Height</div>
+                            <div class="stat-value" id="avgHeight">0.0m</div>
+                        </div>
+                        <div class="stat">
+                            <div class="stat-label">Loitering</div>
+                            <div class="stat-value orange" id="loiteringCount">0</div>
+                        </div>
+                        <div class="stat">
+                            <div class="stat-label">Close Alerts</div>
+                            <div class="stat-value red" id="closePersons">0</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Alerts -->
+                <div class="card">
+                    <div class="card-title">
+                        🚨 Alerts
+                        <span class="status-badge alert" id="alertBadge" style="margin-left: auto;">
+                            <span class="status-dot"></span>
+                            0
+                        </span>
+                    </div>
+                    <div class="alerts-list" id="alertsList">
+                        <div class="no-alerts">No alerts</div>
+                    </div>
+                </div>
+
+                <!-- System Info -->
+                <div class="card">
+                    <div class="card-title">
+                        ⚙️ System
+                    </div>
+                    <div class="stat-grid">
+                        <div class="stat">
+                            <div class="stat-label">FPS</div>
+                            <div class="stat-value" id="fps">0</div>
+                        </div>
+                        <div class="stat">
+                            <div class="stat-label">Status</div>
+                            <div class="stat-value green" id="status">Ready</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function updateData() {
+            fetch('/api/cctv/data')
+                .then(response => response.json())
+                .then(data => {
+                    // Statistics
+                    document.getElementById('totalPersons').textContent = data.total_persons;
+                    document.getElementById('avgDistance').textContent = data.avg_distance.toFixed(1) + 'm';
+                    document.getElementById('avgHeight').textContent = data.avg_height.toFixed(2) + 'm';
+                    document.getElementById('loiteringCount').textContent = data.loitering_count;
+                    document.getElementById('closePersons').textContent = data.close_persons;
+                    document.getElementById('fps').textContent = Math.round(data.fps);
+
+                    // Alert badge
+                    const alertCount = data.alerts.length;
+                    document.getElementById('alertBadge').innerHTML =
+                        `<span class="status-dot"></span>${alertCount}`;
+
+                    // Alerts list
+                    const alertsList = document.getElementById('alertsList');
+                    if (data.alerts.length === 0) {
+                        alertsList.innerHTML = '<div class="no-alerts">No alerts</div>';
+                    } else {
+                        let html = '';
+                        data.alerts.forEach(alert => {
+                            const isWarning = alert.includes('⚠️');
+                            const cssClass = isWarning ? 'warning' : '';
+                            html += `<div class="alert-item ${cssClass}">${alert}</div>`;
+                        });
+                        alertsList.innerHTML = html;
+                    }
+
+                    // Color coding for close persons
+                    const closeStat = document.getElementById('closePersons');
+                    if (data.close_persons > 0) {
+                        closeStat.classList.add('red');
+                    } else {
+                        closeStat.classList.remove('red');
+                    }
+                });
+        }
+
+        function startMonitoring() {
+            fetch('/api/cctv/start', { method: 'POST' })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status === 'started') {
+                        document.getElementById('videoFeed').style.display = 'block';
+                        document.getElementById('placeholder').style.display = 'none';
+                        document.getElementById('status').textContent = 'Active';
+                    }
+                });
+        }
+
+        function stopMonitoring() {
+            fetch('/api/cctv/stop', { method: 'POST' })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status === 'stopped') {
+                        document.getElementById('videoFeed').style.display = 'none';
+                        document.getElementById('placeholder').style.display = 'block';
+                        document.getElementById('status').textContent = 'Stopped';
+                    }
+                });
+        }
+
+        // Update every 100ms
+        setInterval(updateData, 100);
+    </script>
+</body>
+</html>
