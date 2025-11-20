@@ -88,33 +88,33 @@ class SelectiveSSM(nn.Module):
         입력에 따라 동적으로 파라미터를 조정하여
         중요한 정보는 기억하고 불필요한 정보는 망각
         """
-        B, L, D = x.shape
+        batch_size, L, D = x.shape
 
         # Delta (step size) - 각 타임스텝의 중요도
         delta = F.softplus(self.delta_proj(x))  # (B, L, D)
 
         # B, C matrices - 입력 의존적
-        B = self.B_proj(x)  # (B, L, d_state)
-        C = self.C_proj(x)  # (B, L, d_state)
+        B_mat = self.B_proj(x)  # (B, L, d_state)
+        C_mat = self.C_proj(x)  # (B, L, d_state)
 
         # A matrix
         A = -torch.exp(self.A_log.float())  # (D, d_state)
 
         # Discretization - continuous to discrete
         deltaA = torch.exp(delta.unsqueeze(-1) * A)  # (B, L, D, d_state)
-        deltaB = delta.unsqueeze(-1) * B.unsqueeze(2)  # (B, L, D, d_state)
+        deltaB = delta.unsqueeze(-1) * B_mat.unsqueeze(2)  # (B, L, D, d_state)
 
         # Selective scan (parallel associative scan)
         # 이 부분이 실제로는 CUDA 커널로 최적화되어야 하지만,
         # 여기서는 간단한 recurrent 형태로 구현
-        h = torch.zeros(B, D, self.d_state, device=x.device, dtype=x.dtype)
+        h = x.new_zeros(batch_size, D, self.d_state)
         hs = []
 
         x_expanded = x.unsqueeze(-1)  # (B, L, D, 1)
 
         for i in range(L):
             h = deltaA[:, i] * h + deltaB[:, i] * x_expanded[:, i]
-            y_i = (h * C[:, i].unsqueeze(1)).sum(dim=-1)  # (B, D)
+            y_i = (h * C_mat[:, i].unsqueeze(1)).sum(dim=-1)  # (B, D)
             hs.append(y_i)
 
         y = torch.stack(hs, dim=1)  # (B, L, D)

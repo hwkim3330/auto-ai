@@ -454,8 +454,8 @@ def main():
     """Main entry point"""
     root = tk.Tk()
 
-    # Demo mode로 시작 (모델 없이도 동작)
-    app = VisionMambaGUI(root, demo_mode=True)
+    # AI mode - 실제 Vision Mamba 모델 사용
+    app = VisionMambaGUI(root, demo_mode=False)
 
     root.protocol("WM_DELETE_WINDOW", app.on_closing)
     root.mainloop()
