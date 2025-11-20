@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vision Mamba Control - Tesla Style</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+            background: #000;
+            color: #fff;
+            overflow: hidden;
+        }
+
+        /* Main container */
+        .container {
+            display: grid;
+            grid-template-columns: 1fr 400px;
+            grid-template-rows: 80px 1fr 100px;
+            height: 100vh;
+            gap: 0;
+        }
+
+        /* Header */
+        .header {
+            grid-column: 1 / -1;
+            background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+            border-bottom: 2px solid #00ff00;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 30px;
+        }
+
+        .logo {
+            font-size: 28px;
+            font-weight: 700;
+            background: linear-gradient(90deg, #00ff00, #00cc00);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .status {
+            display: flex;
+            gap: 20px;
+            align-items: center;
+        }
+
+        .status-item {
+            font-size: 14px;
+            color: #888;
+        }
+
+        .status-value {
+            color: #00ff00;
+            font-weight: 600;
+        }
+
+        /* Video panel */
+        .video-panel {
+            grid-column: 1;
+            grid-row: 2;
+            position: relative;
+            overflow: hidden;
+            background: #000;
+        }
+
+        #videoFeed {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+
+        /* Right sidebar */
+        .sidebar {
+            grid-column: 2;
+            grid-row: 2 / 4;
+            background: #1a1a1a;
+            border-left: 1px solid #333;
+            overflow-y: auto;
+            padding: 20px;
+        }
+
+        .panel {
+            background: #2d2d2d;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            border: 1px solid #333;
+        }
+
+        .panel-title {
+            font-size: 16px;
+            font-weight: 700;
+            color: #00ff00;
+            margin-bottom: 15px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        /* Control signals */
+        .control-item {
+            margin-bottom: 15px;
+        }
+
+        .control-label {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 5px;
+            font-size: 13px;
+        }
+
+        .control-bar {
+            height: 8px;
+            background: #1a1a1a;
+            border-radius: 4px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .control-fill {
+            height: 100%;
+            transition: width 0.1s ease;
+            border-radius: 4px;
+        }
+
+        .fill-steering {
+            background: linear-gradient(90deg, #ffaa00, #ff6600);
+        }
+
+        .fill-throttle {
+            background: linear-gradient(90deg, #00ff00, #00cc00);
+        }
+
+        .fill-brake {
+            background: linear-gradient(90deg, #ff0000, #cc0000);
+        }
+
+        /* AI Description */
+        .ai-caption-main {
+            font-size: 16px;
+            font-weight: 600;
+            color: #00ff00;
+            margin-bottom: 10px;
+            line-height: 1.4;
+        }
+
+        .ai-caption-detail {
+            font-size: 12px;
+            color: #888;
+            line-height: 1.5;
+        }
+
+        /* Bottom controls */
+        .bottom-controls {
+            grid-column: 1;
+            grid-row: 3;
+            background: #1a1a1a;
+            border-top: 1px solid #333;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 20px;
+            padding: 20px;
+        }
+
+        .btn {
+            padding: 15px 40px;
+            font-size: 16px;
+            font-weight: 600;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .btn-start {
+            background: linear-gradient(135deg, #00ff00, #00cc00);
+            color: #000;
+        }
+
+        .btn-start:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(0, 255, 0, 0.3);
+        }
+
+        .btn-stop {
+            background: linear-gradient(135deg, #ff0000, #cc0000);
+            color: #fff;
+        }
+
+        .btn-stop:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(255, 0, 0, 0.3);
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        /* Metrics */
+        .metric-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+
+        .metric-item {
+            background: #1a1a1a;
+            padding: 12px;
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        .metric-label {
+            font-size: 11px;
+            color: #888;
+            text-transform: uppercase;
+            margin-bottom: 5px;
+        }
+
+        .metric-value {
+            font-size: 18px;
+            font-weight: 700;
+            color: #00ff00;
+        }
+
+        /* Pulse animation */
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .pulse {
+            animation: pulse 2s infinite;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <div class="logo">🚗 VISION MAMBA CONTROL</div>
+            <div class="status">
+                <div class="status-item">
+                    <span class="status-label">FPS:</span>
+                    <span class="status-value" id="fps">0.0</span>
+                </div>
+                <div class="status-item">
+                    <span class="status-label">STATUS:</span>
+                    <span class="status-value pulse" id="status">STANDBY</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Video Feed -->
+        <div class="video-panel">
+            <img id="videoFeed" src="/video_feed" alt="Video Feed">
+        </div>
+
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <!-- Control Signals -->
+            <div class="panel">
+                <div class="panel-title">⚡ Control Signals</div>
+
+                <div class="control-item">
+                    <div class="control-label">
+                        <span>STEERING</span>
+                        <span id="steeringValue">0.00</span>
+                    </div>
+                    <div class="control-bar">
+                        <div class="control-fill fill-steering" id="steeringBar" style="width: 50%"></div>
+                    </div>
+                </div>
+
+                <div class="control-item">
+                    <div class="control-label">
+                        <span>THROTTLE</span>
+                        <span id="throttleValue">0.00</span>
+                    </div>
+                    <div class="control-bar">
+                        <div class="control-fill fill-throttle" id="throttleBar" style="width: 0%"></div>
+                    </div>
+                </div>
+
+                <div class="control-item">
+                    <div class="control-label">
+                        <span>BRAKE</span>
+                        <span id="brakeValue">0.00</span>
+                    </div>
+                    <div class="control-bar">
+                        <div class="control-fill fill-brake" id="brakeBar" style="width: 0%"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- AI Description -->
+            <div class="panel">
+                <div class="panel-title">🤖 AI Description</div>
+                <div class="ai-caption-main" id="captionMain">대기 중...</div>
+                <div class="ai-caption-detail" id="captionDetail">웹캠을 시작하세요</div>
+            </div>
+
+            <!-- Metrics -->
+            <div class="panel">
+                <div class="panel-title">📊 Metrics</div>
+                <div class="metric-grid">
+                    <div class="metric-item">
+                        <div class="metric-label">Brightness</div>
+                        <div class="metric-value" id="brightness">0.00</div>
+                    </div>
+                    <div class="metric-item">
+                        <div class="metric-label">Contrast</div>
+                        <div class="metric-value" id="contrast">0.00</div>
+                    </div>
+                    <div class="metric-item">
+                        <div class="metric-label">Objects</div>
+                        <div class="metric-value" id="objects">0</div>
+                    </div>
+                    <div class="metric-item">
+                        <div class="metric-label">Lanes</div>
+                        <div class="metric-value" id="lanes">0</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Bottom Controls -->
+        <div class="bottom-controls">
+            <button class="btn btn-start" id="startBtn" onclick="startCapture()">▶ Start</button>
+            <button class="btn btn-stop" id="stopBtn" onclick="stopCapture()" disabled>⏸ Stop</button>
+        </div>
+    </div>
+
+    <script>
+        let isRunning = false;
+        let updateInterval = null;
+
+        function startCapture() {
+            fetch('/api/start', { method: 'POST' })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status === 'started' || data.status === 'already_running') {
+                        isRunning = true;
+                        document.getElementById('startBtn').disabled = true;
+                        document.getElementById('stopBtn').disabled = false;
+                        document.getElementById('status').textContent = 'ACTIVE';
+
+                        // 데이터 업데이트 시작
+                        updateInterval = setInterval(updateData, 100);
+                    }
+                });
+        }
+
+        function stopCapture() {
+            fetch('/api/stop', { method: 'POST' })
+                .then(response => response.json())
+                .then(data => {
+                    isRunning = false;
+                    document.getElementById('startBtn').disabled = false;
+                    document.getElementById('stopBtn').disabled = true;
+                    document.getElementById('status').textContent = 'STANDBY';
+
+                    if (updateInterval) {
+                        clearInterval(updateInterval);
+                    }
+                });
+        }
+
+        function updateData() {
+            fetch('/api/data')
+                .then(response => response.json())
+                .then(data => {
+                    // FPS
+                    document.getElementById('fps').textContent = data.fps.toFixed(1);
+
+                    // Steering (-1 to 1 → 0 to 100%)
+                    const steeringPercent = ((data.steering + 1) / 2) * 100;
+                    document.getElementById('steeringValue').textContent = data.steering.toFixed(2);
+                    document.getElementById('steeringBar').style.width = steeringPercent + '%';
+
+                    // Throttle (0 to 1 → 0 to 100%)
+                    document.getElementById('throttleValue').textContent = data.throttle.toFixed(2);
+                    document.getElementById('throttleBar').style.width = (data.throttle * 100) + '%';
+
+                    // Brake (0 to 1 → 0 to 100%)
+                    document.getElementById('brakeValue').textContent = data.brake.toFixed(2);
+                    document.getElementById('brakeBar').style.width = (data.brake * 100) + '%';
+
+                    // Captions
+                    document.getElementById('captionMain').textContent = data.caption_main || '대기 중...';
+                    document.getElementById('captionDetail').textContent = data.caption_detail || '';
+
+                    // Metrics
+                    document.getElementById('brightness').textContent = (data.brightness || 0).toFixed(2);
+                    document.getElementById('contrast').textContent = (data.contrast || 0).toFixed(2);
+                    document.getElementById('objects').textContent = data.objects || 0;
+                    document.getElementById('lanes').textContent = data.lanes || 0;
+                });
+        }
+    </script>
+</body>
+</html>
