@@ -1,6 +1,7 @@
 """Vision Mamba Models"""
 from .mamba import VisionMamba, create_vision_mamba_tiny, create_vision_mamba_small, create_vision_mamba_base
 from .control_model import VisionMambaControl, create_control_model_tiny, create_control_model_base
+from .caption_generator import CaptionGenerator, generate_simple_caption
 
 __all__ = [
     'VisionMamba',
@@ -10,4 +11,6 @@ __all__ = [
     'VisionMambaControl',
     'create_control_model_tiny',
     'create_control_model_base',
+    'CaptionGenerator',
+    'generate_simple_caption',
 ]

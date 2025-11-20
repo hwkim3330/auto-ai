@@ -59,6 +59,10 @@ class VisionMambaGUI:
                 print("Running in demo mode")
                 self.demo_mode = True
 
+        # Caption generator
+        from models.caption_generator import CaptionGenerator
+        self.caption_gen = CaptionGenerator()
+
         # 통계
         self.fps_history = deque(maxlen=30)
         self.steering_history = deque(maxlen=100)
@@ -292,6 +296,51 @@ class VisionMambaGUI:
         )
         self.saturation_label.pack(fill=tk.X, padx=10, pady=2)
 
+        # AI Description panel
+        desc_frame = tk.LabelFrame(
+            right_panel,
+            text="AI Description",
+            font=('Arial', 12, 'bold'),
+            bg='#2d2d2d',
+            fg='#ffffff'
+        )
+        desc_frame.pack(fill=tk.BOTH, expand=True, padx=10, pady=10)
+
+        # Main caption (large)
+        self.main_caption_label = tk.Label(
+            desc_frame,
+            text="🚗 대기 중...",
+            font=('Arial', 13, 'bold'),
+            bg='#2d2d2d',
+            fg='#00ff00',
+            wraplength=360,
+            justify='left'
+        )
+        self.main_caption_label.pack(fill=tk.X, padx=10, pady=10)
+
+        # Detail caption (small)
+        self.detail_caption_label = tk.Label(
+            desc_frame,
+            text="웹캠을 시작하세요",
+            font=('Arial', 9),
+            bg='#2d2d2d',
+            fg='#888888',
+            wraplength=360,
+            justify='left'
+        )
+        self.detail_caption_label.pack(fill=tk.X, padx=10, pady=5)
+
+        # State indicator
+        self.state_label = tk.Label(
+            desc_frame,
+            text="",
+            font=('Arial', 8),
+            bg='#2d2d2d',
+            fg='#666666',
+            anchor='w'
+        )
+        self.state_label.pack(fill=tk.X, padx=10, pady=2)
+
     def start_capture(self):
         """웹캠 캡처 시작"""
         if self.is_running:
@@ -443,6 +492,21 @@ class VisionMambaGUI:
         self.brightness_label.config(text=f"Brightness: {brightness:.2f}")
         self.contrast_label.config(text=f"Contrast: {contrast:.2f}")
         self.saturation_label.config(text=f"Saturation: {saturation:.2f}")
+
+        # AI Description
+        caption = self.caption_gen.generate_caption(
+            steering, throttle, brake,
+            features=None,  # 향후 features 추가 가능
+            camera_stats={
+                'brightness': brightness,
+                'contrast': contrast,
+                'saturation': saturation
+            }
+        )
+
+        self.main_caption_label.config(text=caption['main'])
+        self.detail_caption_label.config(text=caption['detail'])
+        self.state_label.config(text=f"State: {caption['state']} | {caption['trend']}")
 
     def on_closing(self):
         """창 닫기 이벤트"""
