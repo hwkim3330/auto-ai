@@ -1,10 +1,18 @@
-# Auto-AI: Business Automation Platform
+# Auto-AI: Autonomous Company Platform
 
-**자동으로 굴러가는 회사** - AI 기반 업무 자동화 플랫폼
+**완전 자동으로 굴러가는 회사** - AI 기반 전사 자동화 플랫폼
 
-## 개요
+## 🎯 개요
 
-Auto-AI는 회사의 모든 업무를 자동화하여 사람의 개입 없이 자동으로 운영되는 시스템을 만드는 것을 목표로 합니다.
+Auto-AI는 회사의 **모든 레벨(전략/전술/운영)**을 자동화하여 사람의 최소 개입으로 자율 운영되는 완전 자동화 기업을 만드는 플랫폼입니다.
+
+### 핵심 차별점
+
+- ✅ **3계층 AI 시스템**: CEO AI → 부서 AI → 태스크 봇
+- ✅ **완전한 회사 구조 정의**: 조직도, 부서, 역할, 프로세스 전체 모델링
+- ✅ **의사결정 자동화**: 전략적/전술적/운영적 의사결정 자동화
+- ✅ **워크플로우 자동화**: 승인, 태스크 할당, 프로세스 자동 실행
+- ✅ **자가 치유 & 최적화**: 시스템이 스스로 문제를 감지하고 해결
 
 ### 핵심 기능
 
@@ -38,38 +46,64 @@ Auto-AI는 회사의 모든 업무를 자동화하여 사람의 개입 없이 �
 - 시나리오 시뮬레이션
 - 최적화 솔루션 제공
 
-## 시스템 아키텍처
+## 🏗️ 시스템 아키텍처
+
+### 3계층 자동화 구조
+
+```
+┌─────────────────────────────────────────────┐
+│         전략 레벨 (Strategic)                │
+│    CEO AI - 전략적 의사결정 및 분석           │
+│  • 시장 분석 • 전략 수립 • 시나리오 시뮬레이션  │
+└─────────────────┬───────────────────────────┘
+                  │
+┌─────────────────┴───────────────────────────┐
+│         전술 레벨 (Tactical)                 │
+│   부서 AI - 부서별 운영 최적화                │
+│ • 리소스 배분 • 프로젝트 관리 • 성과 분석      │
+└─────────────────┬───────────────────────────┘
+                  │
+┌─────────────────┴───────────────────────────┐
+│         운영 레벨 (Operational)              │
+│    태스크 봇 - 일상 업무 자동화               │
+│  • 문서 생성 • 이메일 처리 • 데이터 수집       │
+└─────────────────────────────────────────────┘
+```
+
+### 디렉토리 구조
 
 ```
 auto-ai/
 ├── src/
-│   ├── core/              # 핵심 시스템
-│   │   ├── ai_engine.py   # Gemini AI 엔진
-│   │   ├── scheduler.py   # 작업 스케줄러
-│   │   └── workflow.py    # 워크플로우 엔진
-│   ├── agents/            # AI 에이전트
-│   │   ├── document_agent.py
-│   │   ├── data_agent.py
-│   │   ├── communication_agent.py
-│   │   └── decision_agent.py
-│   ├── automation/        # 자동화 모듈
-│   │   ├── document/
-│   │   ├── workflow/
-│   │   ├── analytics/
-│   │   └── communication/
-│   ├── integrations/      # 외부 서비스 연동
-│   │   ├── email/
-│   │   ├── slack/
-│   │   ├── calendar/
-│   │   └── storage/
-│   └── api/               # REST API
-├── web/                   # 웹 대시보드
-│   ├── static/
-│   └── templates/
-├── tests/                 # 테스트
-├── docs/                  # 문서
-└── config/               # 설정 파일
+│   ├── core/                    # 핵심 엔진
+│   │   ├── ai_engine.py         # Gemini AI 엔진
+│   │   ├── scheduler.py         # 작업 스케줄러
+│   │   └── workflow_engine.py   # 워크플로우 자동화
+│   ├── models/                  # 데이터 모델
+│   │   └── company.py           # 회사 구조 전체 모델
+│   ├── agents/                  # AI 에이전트 계층
+│   │   ├── ceo_agent.py         # CEO AI (전략)
+│   │   ├── department_agent.py  # 부서 AI (전술)
+│   │   └── task_bot.py          # 태스크 봇 (운영)
+│   ├── automation/              # 자동화 모듈
+│   ├── integrations/            # 외부 연동
+│   └── api/                     # REST API
+├── web/                         # 웹 대시보드
+├── docs/                        # 문서
+│   └── COMPANY_STRUCTURE.md     # 회사 구조 상세 정의
+├── tests/                       # 테스트
+└── config/                      # 설정
 ```
+
+### 데이터 모델
+
+완전한 회사 구조를 모델링:
+
+- **조직 구조**: Company → Departments → Teams → Employees
+- **업무 데이터**: Projects → Milestones → Tasks
+- **재무 데이터**: Revenue, Expenses, Budget, Forecasts
+- **성과 데이터**: KPIs, Performance Reviews
+- **의사결정**: Decisions, Approvals, Workflows
 
 ## 기술 스택
 
