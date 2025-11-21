@@ -1,0 +1,82 @@
+name: Daily Report Generation
+
+on:
+  schedule:
+    # Runs every day at 22:00 UTC (07:00 KST)
+    - cron: '0 22 * * *'
+
+  # Allow manual triggering
+  workflow_dispatch:
+
+jobs:
+  generate-report:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.11'
+        cache: 'pip'
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+
+    - name: Create necessary directories
+      run: |
+        mkdir -p logs reports/daily reports/archive
+
+    - name: Create .env file
+      run: |
+        echo "OPENAI_API_KEY=${{ secrets.OPENAI_API_KEY }}" >> .env
+        echo "NEWS_API_KEY=${{ secrets.NEWS_API_KEY }}" >> .env
+        echo "OPENWEATHER_API_KEY=${{ secrets.OPENWEATHER_API_KEY }}" >> .env
+        echo "ANTHROPIC_API_KEY=${{ secrets.ANTHROPIC_API_KEY }}" >> .env
+        echo "AI_MODEL=${{ secrets.AI_MODEL || 'gpt-4' }}" >> .env
+
+    - name: Generate daily report
+      run: |
+        python main.py
+
+    - name: Get current date
+      id: date
+      run: echo "date=$(date +'%Y-%m-%d')" >> $GITHUB_OUTPUT
+
+    - name: Commit and push reports
+      run: |
+        git config --local user.email "github-actions[bot]@users.noreply.github.com"
+        git config --local user.name "github-actions[bot]"
+        git add reports/daily/*.md reports/daily/*.html || true
+        git diff --staged --quiet || git commit -m "Add daily report for ${{ steps.date.outputs.date }}"
+        git push || true
+
+    - name: Upload reports as artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: daily-report-${{ steps.date.outputs.date }}
+        path: |
+          reports/daily/report_${{ steps.date.outputs.date }}.md
+          reports/daily/report_${{ steps.date.outputs.date }}.html
+        retention-days: 30
+
+    # Optional: Send to Telegram (if configured)
+    - name: Send Telegram notification
+      if: ${{ secrets.TELEGRAM_BOT_TOKEN != '' }}
+      env:
+        TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+        TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+      run: |
+        REPORT_FILE="reports/daily/report_${{ steps.date.outputs.date }}.md"
+        if [ -f "$REPORT_FILE" ]; then
+          # Send first 4000 characters (Telegram limit)
+          CONTENT=$(head -c 4000 "$REPORT_FILE")
+          curl -s -X POST "https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage" \
+            -d chat_id="${TELEGRAM_CHAT_ID}" \
+            -d text="${CONTENT}" \
+            -d parse_mode="Markdown" || true
+        fi

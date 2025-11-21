@@ -1,0 +1,33 @@
+# Auto Daily Report - Python Dependencies
+
+# Core dependencies
+requests==2.31.0
+python-dotenv==1.0.0
+pyyaml==6.0.1
+
+# News & Weather APIs
+newsapi-python==0.2.7
+feedparser==6.0.10  # Google News RSS
+
+# AI & NLP
+openai==1.6.1
+anthropic==0.8.1  # Optional: Claude API
+
+# Publishing
+python-telegram-bot==20.7
+# Email via built-in smtplib
+
+# TTS (Optional - v1.1)
+edge-tts==6.1.9
+
+# Data processing
+pandas==2.1.4
+
+# HTML Generation
+jinja2==3.1.2
+markdown==3.5.1
+
+# Utilities
+pytz==2023.3
+colorama==0.4.6  # Terminal colors
+schedule==1.2.0  # Local scheduling (alternative to GitHub Actions)

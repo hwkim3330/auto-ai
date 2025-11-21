@@ -1,0 +1,254 @@
+# Auto Daily Report - Configuration File
+
+# ============================================
+# Report Settings
+# ============================================
+report:
+  language: ko  # ko, en
+  timezone: Asia/Seoul
+
+  # News categories to include
+  categories:
+    - politics
+    - economy
+    - technology
+    - world
+
+  # Report format
+  formats:
+    - markdown
+    - html
+    # - audio  # Enable for TTS
+
+# ============================================
+# News Collection
+# ============================================
+news:
+  # NewsAPI sources (Korea-focused)
+  sources:
+    - bbc-news
+    - techcrunch
+    - the-verge
+    - wired
+
+  # Google News RSS feeds
+  rss_feeds:
+    - url: "https://news.google.com/rss/search?q=한국+정치&hl=ko&gl=KR&ceid=KR:ko"
+      category: politics
+    - url: "https://news.google.com/rss/search?q=경제+증시&hl=ko&gl=KR&ceid=KR:ko"
+      category: economy
+    - url: "https://news.google.com/rss/search?q=기술+IT+AI&hl=ko&gl=KR&ceid=KR:ko"
+      category: technology
+
+  # Keywords to filter (include these)
+  keywords:
+    - AI
+    - 인공지능
+    - 우주
+    - 혁신
+    - 기술
+    - 정책
+    - 경제
+
+  # Keywords to exclude
+  exclude:
+    - 연예
+    - 스포츠
+    - 게임
+
+  # Number of articles per category
+  max_articles: 10
+
+  # Only fetch articles from last N hours
+  max_age_hours: 24
+
+# ============================================
+# Weather Settings
+# ============================================
+weather:
+  # Primary city
+  city: Seoul
+  country_code: KR
+
+  # Additional cities (optional)
+  additional_cities:
+    - Busan
+    - Incheon
+
+  # Units: metric (Celsius), imperial (Fahrenheit)
+  units: metric
+
+  # Number of days for forecast
+  forecast_days: 3
+
+  # Include air quality index
+  include_aqi: true
+
+  # Clothing recommendations based on temperature
+  clothing_advice:
+    enabled: true
+    thresholds:
+      cold: 5      # Below 5°C
+      cool: 15     # 5-15°C
+      mild: 20     # 15-20°C
+      warm: 25     # 20-25°C
+      hot: 30      # Above 30°C
+
+# ============================================
+# Finance (Optional)
+# ============================================
+finance:
+  enabled: false  # Set to true to include finance data
+
+  # Currency exchange rates
+  currencies:
+    base: KRW
+    targets:
+      - USD
+      - JPY
+      - EUR
+      - CNY
+
+  # Stock indices
+  indices:
+    - symbol: "^KS11"   # KOSPI
+      name: "코스피"
+    - symbol: "^IXIC"   # NASDAQ
+      name: "나스닥"
+
+  # Cryptocurrency (optional)
+  crypto:
+    enabled: false
+    symbols:
+      - BTC
+      - ETH
+
+# ============================================
+# AI Summarization
+# ============================================
+ai:
+  # Model: gpt-4, gpt-3.5-turbo, claude-3-sonnet-20240229
+  model: gpt-4
+
+  # Temperature (0.0 = deterministic, 1.0 = creative)
+  temperature: 0.3
+
+  # Max tokens per summary
+  max_tokens: 500
+
+  # Summarization style
+  style: concise  # concise, detailed, bullet-points
+
+  # Language for summaries
+  summary_language: ko
+
+# ============================================
+# Publishing
+# ============================================
+publishing:
+  # Where to publish reports
+  telegram:
+    enabled: false
+    send_text: true
+    send_audio: false
+
+  email:
+    enabled: false
+    subject_prefix: "[Daily Report]"
+    attach_html: true
+
+  github_pages:
+    enabled: true
+    branch: gh-pages
+    path: index.html
+
+  # Save to local files
+  local:
+    enabled: true
+    save_markdown: true
+    save_html: true
+    save_json: true  # Raw data
+
+# ============================================
+# TTS (Text-to-Speech)
+# ============================================
+tts:
+  enabled: false  # Set to true for audio reports
+
+  # Edge-TTS voice
+  # List available voices: edge-tts --list-voices | grep ko-KR
+  voice: ko-KR-SunHiNeural  # Female voice
+  # voice: ko-KR-InJoonNeural  # Male voice
+
+  # Speech rate (-50% to +50%)
+  rate: +0%
+
+  # Volume (-50% to +50%)
+  volume: +0%
+
+  # Output format
+  output_format: mp3
+
+# ============================================
+# Alerts & Notifications
+# ============================================
+alerts:
+  # Weather alerts
+  rain_probability_threshold: 70  # Alert if > 70%
+
+  # Temperature alerts
+  temperature_alerts:
+    cold: 0      # Alert if < 0°C
+    hot: 35      # Alert if > 35°C
+
+  # Air quality alerts
+  aqi_threshold: 100  # Unhealthy
+
+# ============================================
+# Logging
+# ============================================
+logging:
+  level: INFO  # DEBUG, INFO, WARNING, ERROR
+
+  # Log to file
+  file_logging:
+    enabled: true
+    path: logs/auto-daily-report.log
+    max_size_mb: 10
+    backup_count: 5
+
+  # Console logging
+  console_logging:
+    enabled: true
+    colorful: true
+
+# ============================================
+# Performance
+# ============================================
+performance:
+  # Timeout for API requests (seconds)
+  api_timeout: 30
+
+  # Max retries for failed requests
+  max_retries: 3
+
+  # Delay between retries (seconds)
+  retry_delay: 5
+
+  # Cache settings
+  cache:
+    enabled: true
+    ttl_hours: 1
+
+# ============================================
+# Advanced
+# ============================================
+advanced:
+  # Debug mode
+  debug: false
+
+  # Dry run (don't actually publish)
+  dry_run: false
+
+  # Mock data for testing
+  use_mock_data: false
