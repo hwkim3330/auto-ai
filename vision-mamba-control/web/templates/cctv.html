@@ -260,6 +260,67 @@
             0%, 100% { opacity: 1; }
             50% { opacity: 0.5; }
         }
+
+        /* LiquidAI Toggle */
+        .btn-toggle {
+            margin-left: auto;
+            padding: 6px 14px;
+            border: none;
+            border-radius: 6px;
+            font-size: 11px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            background: rgba(100, 100, 100, 0.3);
+            color: #888;
+        }
+
+        .btn-toggle.active {
+            background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
+            color: white;
+        }
+
+        .ai-status {
+            margin-bottom: 10px;
+        }
+
+        .status-indicator {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 4px;
+            font-size: 11px;
+            background: rgba(100, 100, 100, 0.2);
+            color: #888;
+        }
+
+        .status-indicator.loading {
+            background: rgba(255, 193, 7, 0.2);
+            color: #ffc107;
+        }
+
+        .status-indicator.active {
+            background: rgba(76, 175, 80, 0.2);
+            color: #4CAF50;
+        }
+
+        .ai-description {
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 8px;
+            padding: 12px;
+            min-height: 60px;
+        }
+
+        .ai-description p {
+            font-size: 13px;
+            line-height: 1.5;
+            color: #ddd;
+            margin: 0;
+        }
+
+        .ai-description .placeholder-text {
+            color: #666;
+            font-style: italic;
+        }
     </style>
 </head>
 <body>
@@ -330,6 +391,20 @@
                     </div>
                     <div class="alerts-list" id="alertsList">
                         <div class="no-alerts">No alerts</div>
+                    </div>
+                </div>
+
+                <!-- LiquidAI Description -->
+                <div class="card">
+                    <div class="card-title">
+                        🤖 LiquidAI Scene Analysis
+                        <button class="btn-toggle" id="aiToggle" onclick="toggleLiquidAI()">OFF</button>
+                    </div>
+                    <div class="ai-status" id="aiStatus">
+                        <span class="status-indicator">Disabled</span>
+                    </div>
+                    <div class="ai-description" id="aiDescription">
+                        <p class="placeholder-text">Enable LiquidAI to see AI-generated scene descriptions</p>
                     </div>
                 </div>
 
@@ -421,6 +496,125 @@
 
         // Update every 100ms
         setInterval(updateData, 100);
+
+        // LiquidAI Functions
+        let liquidAIEnabled = false;
+
+        function toggleLiquidAI() {
+            const btn = document.getElementById('aiToggle');
+            const statusEl = document.getElementById('aiStatus');
+
+            if (!liquidAIEnabled) {
+                // Enable LiquidAI
+                fetch('/api/liquidai/enable', { method: 'POST' })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.status === 'enabled') {
+                            liquidAIEnabled = true;
+                            btn.textContent = 'ON';
+                            btn.classList.add('active');
+                            statusEl.innerHTML = '<span class="status-indicator loading">Loading model...</span>';
+                            // Start polling for AI status
+                            pollAIStatus();
+                        }
+                    });
+            } else {
+                // Disable LiquidAI
+                fetch('/api/liquidai/disable', { method: 'POST' })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.status === 'disabled') {
+                            liquidAIEnabled = false;
+                            btn.textContent = 'OFF';
+                            btn.classList.remove('active');
+                            statusEl.innerHTML = '<span class="status-indicator">Disabled</span>';
+                            document.getElementById('aiDescription').innerHTML =
+                                '<p class="placeholder-text">Enable LiquidAI to see AI-generated scene descriptions</p>';
+                        }
+                    });
+            }
+        }
+
+        function pollAIStatus() {
+            if (!liquidAIEnabled) return;
+
+            fetch('/api/liquidai/status')
+                .then(response => response.json())
+                .then(data => {
+                    const statusEl = document.getElementById('aiStatus');
+                    const descEl = document.getElementById('aiDescription');
+
+                    if (data.loading) {
+                        statusEl.innerHTML = '<span class="status-indicator loading">Loading model...</span>';
+                    } else if (data.loaded) {
+                        statusEl.innerHTML = '<span class="status-indicator active">Model ready</span>';
+                    }
+
+                    if (data.description) {
+                        descEl.innerHTML = `<p>${data.description}</p>`;
+                    }
+
+                    // Continue polling if enabled
+                    if (liquidAIEnabled) {
+                        setTimeout(pollAIStatus, 2000);
+                    }
+                })
+                .catch(err => {
+                    console.error('AI status error:', err);
+                    if (liquidAIEnabled) {
+                        setTimeout(pollAIStatus, 5000);
+                    }
+                });
+        }
+
+        // Also update AI description in main data update
+        const originalUpdateData = updateData;
+        updateData = function() {
+            fetch('/api/cctv/data')
+                .then(response => response.json())
+                .then(data => {
+                    // Statistics
+                    document.getElementById('totalPersons').textContent = data.total_persons;
+                    document.getElementById('avgDistance').textContent = data.avg_distance.toFixed(1) + 'm';
+                    document.getElementById('avgHeight').textContent = data.avg_height.toFixed(2) + 'm';
+                    document.getElementById('loiteringCount').textContent = data.loitering_count;
+                    document.getElementById('closePersons').textContent = data.close_persons;
+                    document.getElementById('fps').textContent = Math.round(data.fps);
+
+                    // Alert badge
+                    const alertCount = data.alerts.length;
+                    document.getElementById('alertBadge').innerHTML =
+                        `<span class="status-dot"></span>${alertCount}`;
+
+                    // Alerts list
+                    const alertsList = document.getElementById('alertsList');
+                    if (data.alerts.length === 0) {
+                        alertsList.innerHTML = '<div class="no-alerts">No alerts</div>';
+                    } else {
+                        let html = '';
+                        data.alerts.forEach(alert => {
+                            const isWarning = alert.includes('warning') || alert.includes('Loitering');
+                            const cssClass = isWarning ? 'warning' : '';
+                            html += `<div class="alert-item ${cssClass}">${alert}</div>`;
+                        });
+                        alertsList.innerHTML = html;
+                    }
+
+                    // Color coding for close persons
+                    const closeStat = document.getElementById('closePersons');
+                    if (data.close_persons > 0) {
+                        closeStat.classList.add('red');
+                    } else {
+                        closeStat.classList.remove('red');
+                    }
+
+                    // AI Description update (if enabled and has description)
+                    if (liquidAIEnabled && data.ai_description) {
+                        document.getElementById('aiDescription').innerHTML =
+                            `<p>${data.ai_description}</p>`;
+                    }
+                });
+        };
     </script>
 </body>
 </html>

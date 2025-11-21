@@ -21,6 +21,7 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), 'src'))
 from capture.webcam import WebcamCapture
 from vision.tesla_detector import TeslaDetector
 from vision.depth_estimator import DepthAnythingV3, CCTVMonitor
+from vision.liquidai_describer import LiquidAIDescriber, get_describer
 
 app = Flask(__name__,
             template_folder='web/templates',
@@ -42,8 +43,15 @@ cctv_data = {
     'close_persons': 0,
     'avg_distance': 0.0,
     'avg_height': 0.0,
-    'alerts': []
+    'alerts': [],
+    'ai_description': ''
 }
+
+# LiquidAI
+liquidai_describer = None
+liquidai_enabled = False
+current_detections = []
+current_analytics = {}
 
 
 def init_cctv_system():
@@ -118,6 +126,19 @@ def cctv_update_loop():
             for close in analytics.get('close_persons', []):
                 alerts.append(f"🚨 Too close: {close['distance']:.1f}m")
 
+            # Update current detections for AI description
+            global current_detections, current_analytics
+            current_detections = detections
+            current_analytics = analytics
+
+            # Generate AI description if enabled
+            ai_desc = ''
+            if liquidai_enabled and liquidai_describer:
+                try:
+                    ai_desc = liquidai_describer.describe_scene(detections, analytics)
+                except Exception as e:
+                    ai_desc = f"AI unavailable: {str(e)[:50]}"
+
             cctv_data.update({
                 'fps': float(fps),
                 'total_persons': analytics.get('total_persons', 0),
@@ -125,7 +146,8 @@ def cctv_update_loop():
                 'close_persons': len(analytics.get('close_persons', [])),
                 'avg_distance': float(avg_distance),
                 'avg_height': float(avg_height),
-                'alerts': alerts[:5]
+                'alerts': alerts[:5],
+                'ai_description': ai_desc
             })
 
             cctv_frame = frame_processed
@@ -275,6 +297,98 @@ def cctv_stop():
         cctv_webcam = None
 
     return jsonify({'status': 'stopped'})
+
+
+# ============================================================================
+# LiquidAI API Endpoints
+# ============================================================================
+
+@app.route('/api/liquidai/enable', methods=['POST'])
+def liquidai_enable():
+    """Enable LiquidAI scene description"""
+    global liquidai_describer, liquidai_enabled
+
+    try:
+        liquidai_describer = get_describer()
+        liquidai_enabled = True
+
+        # Start loading model in background
+        def load_model_bg():
+            liquidai_describer.load_model()
+
+        thread = threading.Thread(target=load_model_bg, daemon=True)
+        thread.start()
+
+        return jsonify({
+            'status': 'enabled',
+            'message': 'LiquidAI enabled. Model loading in background...'
+        })
+
+    except Exception as e:
+        return jsonify({'status': 'error', 'message': str(e)})
+
+
+@app.route('/api/liquidai/disable', methods=['POST'])
+def liquidai_disable():
+    """Disable LiquidAI scene description"""
+    global liquidai_enabled
+
+    liquidai_enabled = False
+
+    return jsonify({'status': 'disabled'})
+
+
+@app.route('/api/liquidai/status')
+def liquidai_status():
+    """Get LiquidAI status"""
+    status = {
+        'enabled': liquidai_enabled,
+        'loaded': False,
+        'loading': False,
+        'model_id': 'LiquidAI/LFM2-1.2B',
+        'description': cctv_data.get('ai_description', '')
+    }
+
+    if liquidai_describer:
+        describer_status = liquidai_describer.get_status()
+        status['loaded'] = describer_status.get('loaded', False)
+        status['loading'] = describer_status.get('loading', False)
+
+    return jsonify(status)
+
+
+@app.route('/api/liquidai/describe', methods=['POST'])
+def liquidai_describe_now():
+    """Generate description immediately"""
+    global liquidai_describer
+
+    if not liquidai_enabled:
+        return jsonify({
+            'status': 'error',
+            'message': 'LiquidAI not enabled'
+        })
+
+    if not liquidai_describer:
+        liquidai_describer = get_describer()
+
+    try:
+        # Force immediate description
+        liquidai_describer.last_description_time = 0
+        description = liquidai_describer.describe_scene(
+            current_detections,
+            current_analytics
+        )
+
+        return jsonify({
+            'status': 'success',
+            'description': description
+        })
+
+    except Exception as e:
+        return jsonify({
+            'status': 'error',
+            'message': str(e)
+        })
 
 
 if __name__ == '__main__':
