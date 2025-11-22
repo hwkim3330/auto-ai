@@ -1,0 +1,170 @@
+{
+  "sine_prediction_seq100": [
+    {
+      "model": "Liquid NN",
+      "task": "sine_prediction",
+      "accuracy": 0.5155514173486642,
+      "inference_time_ms": 209.52954467968084,
+      "parameters": 61264,
+      "memory_mb": 1.79620361328125,
+      "flops_estimate": 386662400,
+      "score": 0.21246373858290118
+    },
+    {
+      "model": "Transformer",
+      "task": "sine_prediction",
+      "accuracy": 0.5198816456346153,
+      "inference_time_ms": 4.235511088918429,
+      "parameters": 103120,
+      "memory_mb": 1.95587158203125,
+      "flops_estimate": 491520000,
+      "score": 0.2681349450789954
+    },
+    {
+      "model": "LSTM",
+      "task": "sine_prediction",
+      "accuracy": 0.6647395793299042,
+      "inference_time_ms": 2.6291431902791373,
+      "parameters": 59408,
+      "memory_mb": 1.78912353515625,
+      "flops_estimate": 163840000,
+      "score": 0.3535262011606513
+    },
+    {
+      "model": "Mamba-style SSM",
+      "task": "sine_prediction",
+      "accuracy": 0.5461822088181003,
+      "inference_time_ms": 16.902466258907225,
+      "parameters": 36560,
+      "memory_mb": 1.70196533203125,
+      "flops_estimate": 229376000,
+      "score": 0.24321757166983365
+    }
+  ],
+  "sine_prediction_seq500": [
+    {
+      "model": "Liquid NN",
+      "task": "sine_prediction",
+      "accuracy": 0.5087658249622464,
+      "inference_time_ms": 1005.307108379784,
+      "parameters": 61264,
+      "memory_mb": 8.04620361328125,
+      "flops_estimate": 1933312000,
+      "score": 0.20862264321012383
+    },
+    {
+      "model": "Transformer",
+      "task": "sine_prediction",
+      "accuracy": 0.5568348028124226,
+      "inference_time_ms": 106.53278235840844,
+      "parameters": 103120,
+      "memory_mb": 8.20587158203125,
+      "flops_estimate": 2457600000,
+      "score": 0.22840505884780327
+    },
+    {
+      "model": "LSTM",
+      "task": "sine_prediction",
+      "accuracy": 0.6640094493379621,
+      "inference_time_ms": 12.322676770272665,
+      "parameters": 59408,
+      "memory_mb": 8.03912353515625,
+      "flops_estimate": 819200000,
+      "score": 0.29308800670803786
+    },
+    {
+      "model": "Mamba-style SSM",
+      "task": "sine_prediction",
+      "accuracy": 0.5610154178106609,
+      "inference_time_ms": 80.27984176937025,
+      "parameters": 36560,
+      "memory_mb": 7.95196533203125,
+      "flops_estimate": 1146880000,
+      "score": 0.23608433963874445
+    }
+  ],
+  "long_range_dependency_seq200": [
+    {
+      "model": "Liquid NN",
+      "task": "long_range_dependency",
+      "accuracy": 0.7161869921933762,
+      "inference_time_ms": 403.8999272295041,
+      "parameters": 59720,
+      "memory_mb": 1.790313720703125,
+      "flops_estimate": 753664000,
+      "score": 0.29215643215782383
+    },
+    {
+      "model": "Transformer",
+      "task": "long_range_dependency",
+      "accuracy": 0.7228961803117794,
+      "inference_time_ms": 17.243262420524843,
+      "parameters": 101576,
+      "memory_mb": 1.949981689453125,
+      "flops_estimate": 963379200,
+      "score": 0.3085275600221427
+    },
+    {
+      "model": "LSTM",
+      "task": "long_range_dependency",
+      "accuracy": 0.9601549722939416,
+      "inference_time_ms": 4.730695570760872,
+      "parameters": 54792,
+      "memory_mb": 1.771514892578125,
+      "flops_estimate": 268697600,
+      "score": 0.4417887700772033
+    },
+    {
+      "model": "Mamba-style SSM",
+      "task": "long_range_dependency",
+      "accuracy": 0.751799655790694,
+      "inference_time_ms": 32.01862764253747,
+      "parameters": 35016,
+      "memory_mb": 1.696075439453125,
+      "flops_estimate": 439091200,
+      "score": 0.31813527399521985
+    }
+  ],
+  "anomaly_detection_seq150": [
+    {
+      "model": "Liquid NN",
+      "task": "anomaly_detection",
+      "accuracy": 0.9554490186318204,
+      "inference_time_ms": 299.0999180803192,
+      "parameters": 58753,
+      "memory_mb": 0.8100624084472656,
+      "flops_estimate": 556032000,
+      "score": 0.38819994292167476
+    },
+    {
+      "model": "Transformer",
+      "task": "anomaly_detection",
+      "accuracy": 0.6454131993513252,
+      "inference_time_ms": 9.950827737338841,
+      "parameters": 100609,
+      "memory_mb": 0.9697303771972656,
+      "flops_estimate": 713318400,
+      "score": 0.28851296351064565
+    },
+    {
+      "model": "LSTM",
+      "task": "anomaly_detection",
+      "accuracy": 0.9544411643319755,
+      "inference_time_ms": 3.468692340538837,
+      "parameters": 52289,
+      "memory_mb": 0.7854042053222656,
+      "flops_estimate": 177561600,
+      "score": 0.45453987875112534
+    },
+    {
+      "model": "Mamba-style SSM",
+      "task": "anomaly_detection",
+      "accuracy": 0.7264582724874088,
+      "inference_time_ms": 23.693922409729566,
+      "parameters": 34049,
+      "memory_mb": 0.7158241271972656,
+      "flops_estimate": 320102400,
+      "score": 0.3112914926041785
+    }
+  ]
+}
