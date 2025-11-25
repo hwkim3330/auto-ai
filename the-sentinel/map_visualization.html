@@ -1,0 +1,507 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>실시간 CCTV 추적 지도 | Real-Time CCTV Tracking Map</title>
+
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Noto Sans KR', 'Segoe UI', sans-serif;
+            background: #0a0a0a;
+            color: #00ff00;
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #000000, #1a1a1a);
+            border-bottom: 2px solid #00ff00;
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header h1 {
+            font-size: 1.5em;
+            letter-spacing: 2px;
+        }
+
+        .ethics-notice {
+            background: rgba(255, 0, 0, 0.1);
+            border: 1px solid #ff0000;
+            padding: 5px 10px;
+            font-size: 0.8em;
+            color: #ff6666;
+        }
+
+        .main-container {
+            display: flex;
+            height: calc(100vh - 70px);
+        }
+
+        #map {
+            flex: 1;
+            height: 100%;
+        }
+
+        .sidebar {
+            width: 350px;
+            background: rgba(10, 10, 10, 0.95);
+            border-left: 1px solid #00ff00;
+            padding: 20px;
+            overflow-y: auto;
+        }
+
+        .stats-panel {
+            background: rgba(0, 255, 0, 0.05);
+            border: 1px solid #00ff00;
+            padding: 15px;
+            margin-bottom: 20px;
+        }
+
+        .stats-panel h2 {
+            border-bottom: 1px solid #00ff00;
+            padding-bottom: 10px;
+            margin-bottom: 15px;
+            font-size: 1.1em;
+        }
+
+        .stat-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px dotted rgba(0, 255, 0, 0.3);
+        }
+
+        .stat-label {
+            color: #00cc00;
+        }
+
+        .stat-value {
+            color: #00ff00;
+            font-weight: bold;
+        }
+
+        .track-list {
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .track-item {
+            background: rgba(0, 255, 0, 0.05);
+            border: 1px solid rgba(0, 255, 0, 0.3);
+            padding: 10px;
+            margin-bottom: 10px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .track-item:hover {
+            background: rgba(0, 255, 0, 0.15);
+            border-color: #00ff00;
+        }
+
+        .track-item.person {
+            border-left: 3px solid #00ff00;
+        }
+
+        .track-item.vehicle {
+            border-left: 3px solid #ff0000;
+        }
+
+        .track-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 5px;
+        }
+
+        .track-id {
+            font-weight: bold;
+            color: #00ff00;
+        }
+
+        .track-class {
+            font-size: 0.9em;
+            color: #00cc00;
+        }
+
+        .track-info {
+            font-size: 0.8em;
+            color: #009900;
+        }
+
+        .controls {
+            position: absolute;
+            top: 90px;
+            left: 20px;
+            z-index: 1000;
+            background: rgba(10, 10, 10, 0.9);
+            border: 1px solid #00ff00;
+            padding: 15px;
+        }
+
+        .control-btn {
+            background: rgba(0, 255, 0, 0.2);
+            border: 1px solid #00ff00;
+            color: #00ff00;
+            padding: 10px 20px;
+            margin: 5px;
+            cursor: pointer;
+            font-family: 'Courier New', monospace;
+            transition: all 0.2s;
+        }
+
+        .control-btn:hover {
+            background: rgba(0, 255, 0, 0.4);
+        }
+
+        .control-btn:active {
+            background: rgba(0, 255, 0, 0.6);
+        }
+
+        /* Leaflet custom styles */
+        .leaflet-popup-content-wrapper {
+            background: rgba(10, 10, 10, 0.95);
+            color: #00ff00;
+            border: 1px solid #00ff00;
+        }
+
+        .leaflet-popup-tip {
+            background: rgba(10, 10, 10, 0.95);
+        }
+
+        .trajectory-line {
+            stroke: #00ffff;
+            stroke-width: 2;
+            fill: none;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .pulse {
+            animation: pulse 2s infinite;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>🎥 실시간 CCTV 추적 지도 | Real-Time CCTV Tracking Map</h1>
+        <div class="ethics-notice">
+            ⚠️ 익명 추적 | 교육/연구 목적 | 얼굴 인식 없음
+        </div>
+    </div>
+
+    <div class="main-container">
+        <div id="map"></div>
+
+        <div class="sidebar">
+            <div class="stats-panel">
+                <h2>📊 시스템 통계</h2>
+                <div class="stat-item">
+                    <span class="stat-label">활성 CCTV:</span>
+                    <span class="stat-value" id="active-cameras">0</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">추적 중인 사람:</span>
+                    <span class="stat-value" id="tracked-people">0</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">추적 중인 차량:</span>
+                    <span class="stat-value" id="tracked-vehicles">0</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">총 추적 객체:</span>
+                    <span class="stat-value" id="total-tracks">0</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">업데이트 시간:</span>
+                    <span class="stat-value" id="update-time">--:--:--</span>
+                </div>
+            </div>
+
+            <div class="stats-panel">
+                <h2>🎯 추적 목록</h2>
+                <div class="track-list" id="track-list">
+                    <p style="color: #00aa00; text-align: center;">데이터 로딩 중...</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="controls">
+        <button class="control-btn" onclick="loadTrackingData()">🔄 데이터 새로고침</button>
+        <button class="control-btn" onclick="togglePredictions()">🔮 예측 표시</button>
+        <button class="control-btn" onclick="toggleTrajectories()">📈 궤적 표시</button>
+    </div>
+
+    <!-- Leaflet JS -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+    <script>
+        // Initialize map centered on Seoul
+        const map = L.map('map').setView([37.5665, 126.9780], 13);
+
+        // Add OpenStreetMap tiles
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '© OpenStreetMap contributors',
+            maxZoom: 19
+        }).addTo(map);
+
+        // Custom icons
+        const personIcon = L.divIcon({
+            className: 'custom-icon',
+            html: '<div style="background: #00ff00; width: 12px; height: 12px; border-radius: 50%; border: 2px solid #fff;"></div>',
+            iconSize: [16, 16],
+            iconAnchor: [8, 8]
+        });
+
+        const vehicleIcon = L.divIcon({
+            className: 'custom-icon',
+            html: '<div style="background: #ff0000; width: 12px; height: 12px; border-radius: 50%; border: 2px solid #fff;"></div>',
+            iconSize: [16, 16],
+            iconAnchor: [8, 8]
+        });
+
+        const cameraIcon = L.icon({
+            iconUrl: 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSIjMDBmZjAwIj48cGF0aCBkPSJNMTcgMTBjMCAxLjEwMy0uODk3IDItMiAycy0yLS44OTctMi0yIC44OTctMiAyLTIgMiAuODk3IDIgMnptMy04djE0aC0xOXYtMTRoNGwxLjU2OS0yaDE0LjQzMWwyLjg1NyAyaDR2MTR6TTkgNmMtMi43NiAwLTUgMi4yNC01IDVzMi4yNCA1IDUgNSA1LTIuMjQgNS01LTIuMjQtNS01LTV6bTEwIDEwaC0xMmwtNCAydi0yaDEyem0tMTAtOGMtMS42NTQgMC0zIDEuMzQ2LTMgM3MxLjM0NiAzIDMgMyAzLTEuMzQ2IDMtMy0xLjM0Ni0zLTMtM3oiLz48L3N2Zz4=',
+            iconSize: [32, 32],
+            iconAnchor: [16, 32],
+            popupAnchor: [0, -32]
+        });
+
+        // State
+        let cameras = [];
+        let tracks = [];
+        let markers = {};
+        let trajectories = {};
+        let showPredictions = true;
+        let showTrajectories = true;
+
+        // Sample CCTV locations (Seoul)
+        const sampleCameras = [
+            { id: 'SEOUL_001', name: '강남역 사거리', lat: 37.4979, lon: 127.0276 },
+            { id: 'SEOUL_002', name: '광화문 광장', lat: 37.5720, lon: 126.9769 },
+            { id: 'SEOUL_003', name: '홍대입구역', lat: 37.5566, lon: 126.9236 },
+            { id: 'SEOUL_004', name: '서울역', lat: 37.5547, lon: 126.9707 }
+        ];
+
+        // Add camera markers
+        function addCameraMarkers() {
+            sampleCameras.forEach(cam => {
+                const marker = L.marker([cam.lat, cam.lon], { icon: cameraIcon })
+                    .addTo(map)
+                    .bindPopup(`
+                        <div style="font-family: monospace;">
+                            <strong>${cam.name}</strong><br>
+                            ID: ${cam.id}<br>
+                            상태: <span style="color: #00ff00;">● 활성</span>
+                        </div>
+                    `);
+
+                cameras.push({ ...cam, marker });
+            });
+
+            document.getElementById('active-cameras').textContent = cameras.length;
+        }
+
+        // Load tracking data
+        async function loadTrackingData() {
+            // In production: Fetch from server
+            // For demo: Generate simulated data
+            tracks = generateSimulatedTracks();
+
+            updateMap();
+            updateStats();
+            updateTrackList();
+        }
+
+        // Generate simulated tracking data
+        function generateSimulatedTracks() {
+            const simTracks = [];
+            const numTracks = 10 + Math.floor(Math.random() * 20);
+
+            for (let i = 0; i < numTracks; i++) {
+                const camera = sampleCameras[Math.floor(Math.random() * sampleCameras.length)];
+                const trackClass = Math.random() > 0.6 ? 'person' : 'vehicle';
+
+                // Random offset from camera
+                const offsetLat = (Math.random() - 0.5) * 0.01;
+                const offsetLon = (Math.random() - 0.5) * 0.01;
+
+                const lat = camera.lat + offsetLat;
+                const lon = camera.lon + offsetLon;
+
+                // Velocity
+                const vx = (Math.random() - 0.5) * 0.0002;
+                const vy = (Math.random() - 0.5) * 0.0002;
+
+                // Generate trajectory (last 10 positions)
+                const trajectory = [];
+                for (let j = 10; j >= 0; j--) {
+                    trajectory.push([
+                        lat - vx * j,
+                        lon - vy * j
+                    ]);
+                }
+
+                simTracks.push({
+                    track_id: i + 1,
+                    class: trackClass,
+                    position: [lat, lon],
+                    trajectory: trajectory,
+                    velocity: [vx, vy],
+                    predicted: [lat + vx * 10, lon + vy * 10],
+                    location: [lat, lon],
+                    camera: camera.id
+                });
+            }
+
+            return simTracks;
+        }
+
+        // Update map with tracks
+        function updateMap() {
+            // Clear existing markers
+            Object.values(markers).forEach(m => map.removeLayer(m));
+            Object.values(trajectories).forEach(t => map.removeLayer(t));
+            markers = {};
+            trajectories = {};
+
+            tracks.forEach(track => {
+                if (!track.position) return;
+
+                const [lat, lon] = track.position;
+                const icon = track.class === 'person' ? personIcon : vehicleIcon;
+
+                // Add marker
+                const marker = L.marker([lat, lon], { icon })
+                    .addTo(map)
+                    .bindPopup(`
+                        <div style="font-family: monospace;">
+                            <strong>Track ID: ${track.track_id}</strong><br>
+                            타입: ${track.class === 'person' ? '👤 사람' : '🚗 차량'}<br>
+                            카메라: ${track.camera}<br>
+                            속도: ${(Math.sqrt(track.velocity[0]**2 + track.velocity[1]**2) * 100000).toFixed(2)} m/s
+                        </div>
+                    `);
+
+                markers[track.track_id] = marker;
+
+                // Add trajectory
+                if (showTrajectories && track.trajectory && track.trajectory.length > 1) {
+                    const polyline = L.polyline(track.trajectory, {
+                        color: track.class === 'person' ? '#00ffff' : '#ffaa00',
+                        weight: 2,
+                        opacity: 0.6
+                    }).addTo(map);
+
+                    trajectories[track.track_id] = polyline;
+                }
+
+                // Add predicted position
+                if (showPredictions && track.predicted) {
+                    const predIcon = L.divIcon({
+                        className: 'custom-icon pulse',
+                        html: '<div style="background: rgba(255,0,0,0.5); width: 10px; height: 10px; border-radius: 50%; border: 1px dashed #fff;"></div>',
+                        iconSize: [10, 10],
+                        iconAnchor: [5, 5]
+                    });
+
+                    const predMarker = L.marker(track.predicted, { icon: predIcon })
+                        .addTo(map);
+
+                    // Draw prediction line
+                    L.polyline([track.position, track.predicted], {
+                        color: '#ff0000',
+                        weight: 1,
+                        opacity: 0.5,
+                        dashArray: '5, 10'
+                    }).addTo(map);
+                }
+            });
+        }
+
+        // Update statistics
+        function updateStats() {
+            const people = tracks.filter(t => t.class === 'person').length;
+            const vehicles = tracks.filter(t => t.class === 'vehicle').length;
+
+            document.getElementById('tracked-people').textContent = people;
+            document.getElementById('tracked-vehicles').textContent = vehicles;
+            document.getElementById('total-tracks').textContent = tracks.length;
+
+            const now = new Date();
+            document.getElementById('update-time').textContent =
+                `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}:${String(now.getSeconds()).padStart(2, '0')}`;
+        }
+
+        // Update track list
+        function updateTrackList() {
+            const listEl = document.getElementById('track-list');
+            listEl.innerHTML = '';
+
+            if (tracks.length === 0) {
+                listEl.innerHTML = '<p style="color: #00aa00; text-align: center;">추적 중인 객체 없음</p>';
+                return;
+            }
+
+            tracks.forEach(track => {
+                const item = document.createElement('div');
+                item.className = `track-item ${track.class}`;
+                item.onclick = () => {
+                    if (markers[track.track_id]) {
+                        map.setView(track.position, 16);
+                        markers[track.track_id].openPopup();
+                    }
+                };
+
+                const speed = Math.sqrt(track.velocity[0]**2 + track.velocity[1]**2) * 100000;
+
+                item.innerHTML = `
+                    <div class="track-header">
+                        <span class="track-id">ID ${track.track_id}</span>
+                        <span class="track-class">${track.class === 'person' ? '👤 사람' : '🚗 차량'}</span>
+                    </div>
+                    <div class="track-info">
+                        카메라: ${track.camera}<br>
+                        속도: ${speed.toFixed(2)} m/s
+                    </div>
+                `;
+
+                listEl.appendChild(item);
+            });
+        }
+
+        // Toggle functions
+        function togglePredictions() {
+            showPredictions = !showPredictions;
+            updateMap();
+        }
+
+        function toggleTrajectories() {
+            showTrajectories = !showTrajectories;
+            updateMap();
+        }
+
+        // Initialize
+        addCameraMarkers();
+        loadTrackingData();
+
+        // Auto-refresh every 2 seconds
+        setInterval(loadTrackingData, 2000);
+    </script>
+</body>
+</html>
