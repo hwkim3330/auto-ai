@@ -1,0 +1,113 @@
+{
+  "analysis": {
+    "problem": "5초만 CCTV 시청 가능",
+    "observed_url": "blob:https://topis.seoul.go.kr/...",
+    "hypotheses": [
+      {
+        "id": 1,
+        "theory": "Client-side blob generation",
+        "evidence": "blob: protocol indicates local object URL",
+        "implication": "Real stream URL exists in network requests",
+        "confidence": 0.9
+      },
+      {
+        "id": 2,
+        "theory": "API endpoint provides stream URL",
+        "evidence": "TOPIS is public data portal",
+        "implication": "Should have documented or discoverable API",
+        "confidence": 0.8
+      },
+      {
+        "id": 3,
+        "theory": "Time-limited token system",
+        "evidence": "5-second limitation is consistent",
+        "implication": "Need to refresh token periodically",
+        "confidence": 0.7
+      }
+    ],
+    "approach": [
+      "1. Inspect network requests (F12 Developer Tools)",
+      "2. Find API endpoint that returns CCTV list",
+      "3. Extract real stream URL from API response",
+      "4. Implement token refresh mechanism if needed",
+      "5. Respect rate limits to avoid server overload"
+    ]
+  },
+  "solutions": {
+    "solutions": {
+      "method_1": {
+        "name": "Browser DevTools Inspection",
+        "steps": [
+          "1. Open https://topis.seoul.go.kr/map/openCctvMap.do",
+          "2. Press F12 to open Developer Tools",
+          "3. Go to Network tab",
+          "4. Filter: XHR or Media",
+          "5. Click on a CCTV to view",
+          "6. Look for requests with .m3u8, .mp4, or stream-like URLs",
+          "7. Copy the request URL and headers",
+          "8. Replay the request programmatically"
+        ],
+        "tools": [
+          "Browser DevTools",
+          "curl",
+          "Python requests"
+        ],
+        "difficulty": "Easy",
+        "success_rate": 0.95
+      },
+      "method_2": {
+        "name": "Selenium Automation",
+        "steps": [
+          "1. Use Selenium to automate browser",
+          "2. Click CCTV every 4 seconds (before timeout)",
+          "3. Capture network requests",
+          "4. Extract stream URL from captured traffic",
+          "5. Use extracted URL directly"
+        ],
+        "code_example": "selenium_topis_capture.py",
+        "difficulty": "Medium",
+        "success_rate": 0.85
+      },
+      "method_3": {
+        "name": "Official API (if available)",
+        "steps": [
+          "1. Check Seoul Open Data Plaza",
+          "2. Search for \"TOPIS CCTV API\"",
+          "3. Register and get API key",
+          "4. Use documented endpoints",
+          "5. No reverse engineering needed"
+        ],
+        "url": "https://data.seoul.go.kr/",
+        "difficulty": "Easy (if exists)",
+        "success_rate": 1.0
+      },
+      "method_4": {
+        "name": "Continuous Refresh Strategy",
+        "steps": [
+          "1. Auto-refresh every 4 seconds",
+          "2. Capture each 5-second chunk",
+          "3. Stitch chunks together",
+          "4. Maintain continuous stream"
+        ],
+        "difficulty": "Hard",
+        "success_rate": 0.6,
+        "caveat": "May violate ToS, causes server load"
+      }
+    },
+    "recommendation": {
+      "best_approach": "method_1",
+      "reasoning": [
+        "Most reliable: directly observe actual requests",
+        "Legal: using publicly exposed endpoints",
+        "Efficient: one-time analysis, reusable URLs",
+        "Educational: learn how the system works"
+      ],
+      "ethical_considerations": [
+        "⚠️ Respect rate limits (max 1 request per 5 seconds)",
+        "⚠️ Use only for educational/research purposes",
+        "⚠️ Do not overload TOPIS servers",
+        "⚠️ Follow Seoul city data usage policies"
+      ]
+    }
+  }
+}
