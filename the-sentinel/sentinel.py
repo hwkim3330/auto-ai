@@ -8,9 +8,10 @@ Inspired by Person of Interest's Machine:
 - Uses Liquid NN for efficient online learning
 - UltraThink for autonomous reasoning
 - Code Agent for recursive self-improvement
+- Self-Replication for evolutionary optimization
 
 Architecture:
-    CCTV → Vision → Liquid NN → UltraThink → Code Agent → Loop
+    CCTV → Vision → Liquid NN → UltraThink → Code Agent → Self-Replication → Loop
 """
 
 import sys
@@ -27,12 +28,14 @@ import numpy as np
 # Add parent directories to path
 sys.path.append(str(Path(__file__).parent.parent / "liquid-nn-ai"))
 sys.path.append(str(Path(__file__).parent.parent / "ultrathink-agi"))
+sys.path.append(str(Path(__file__).parent))
 
 try:
     import torch
     import torch.nn as nn
     from liquid_nn import LiquidNeuralNetwork, count_parameters
     from ultrathink import UltraThink
+    from self_replication_system import SelfReplicatingAI
 except ImportError as e:
     print(f"Warning: {e}")
     print("Some features may be unavailable. Install dependencies:")
@@ -333,6 +336,8 @@ class TheSentinel:
     """
     Main surveillance and learning system
     Integrates all components into recursive improvement loop
+
+    Now with evolutionary self-replication!
     """
 
     def __init__(self, feature_dim: int = 128):
@@ -346,10 +351,22 @@ class TheSentinel:
         self.reasoning = None  # UltraThink loaded on-demand
         self.code_agent = CodeAgent(Path(__file__).parent)
 
+        # Self-Replication for evolutionary optimization
+        try:
+            self.replicator = SelfReplicatingAI()
+            print("[Sentinel] Self-Replication system loaded")
+        except Exception as e:
+            self.replicator = None
+            print(f"[Sentinel] Self-Replication unavailable: {e}")
+
         # State
         self.cameras: List[CameraStream] = []
         self.running = False
         self.cycle_count = 0
+
+        # Evolution tracking
+        self.evolution_history = []
+        self.best_config = None
 
         # Performance tracking
         self.start_time = time.time()
@@ -437,7 +454,13 @@ class TheSentinel:
         }
 
     def self_improve(self):
-        """Recursive self-improvement cycle"""
+        """
+        Recursive self-improvement cycle with evolutionary optimization
+
+        Two-stage improvement:
+        1. Quick CodeAgent improvements (learning rate, etc.)
+        2. Deep evolutionary optimization (every 500 cycles)
+        """
         # Gather metrics
         metrics = {
             'total_observations': self.learning.metrics.total_observations,
@@ -448,20 +471,98 @@ class TheSentinel:
             'cycles': self.cycle_count
         }
 
-        # Analyze performance
+        # Stage 1: Quick CodeAgent improvements
         analysis = self.code_agent.analyze_performance(metrics)
 
-        # Generate and apply improvements
         if analysis.get('suggestions'):
             improvement = self.code_agent.generate_improvement(analysis)
             if improvement:
-                print(f"[CodeAgent] Applying self-improvement...")
+                print(f"[CodeAgent] Applying quick improvement...")
                 success = self.code_agent.apply_improvement(
                     improvement,
                     {'learning_engine': self.learning}
                 )
                 if success:
-                    print(f"[CodeAgent] Improvement applied successfully")
+                    print(f"[CodeAgent] Quick improvement applied")
+
+        # Stage 2: Deep evolutionary optimization (every 500 cycles)
+        if self.replicator and self.cycle_count % 500 == 0:
+            print("\n" + "=" * 60)
+            print("🧬 EVOLUTIONARY OPTIMIZATION TRIGGERED")
+            print("=" * 60)
+            self.evolve_architecture()
+
+    def evolve_architecture(self):
+        """
+        Use evolutionary algorithms to optimize system architecture
+
+        This is the deep self-improvement that happens periodically:
+        - Generates variations of the system
+        - Tests performance
+        - Selects best configuration
+        - Applies improvements
+        """
+        if not self.replicator:
+            print("[Evolution] Replicator unavailable")
+            return
+
+        print("[Evolution] Starting 3-generation evolutionary optimization...")
+
+        # Run evolution with small population for efficiency
+        try:
+            best_agent, history = self.replicator.evolve(
+                num_generations=3,
+                population_size=5
+            )
+
+            # Extract best configuration
+            best_config = best_agent.dna.config
+            best_performance = best_agent.dna.performance
+
+            print(f"\n[Evolution] Best configuration found:")
+            print(f"  Performance: {best_performance:.4f}")
+            print(f"  Learning Rate: {best_config['learning_rate']:.6f}")
+            print(f"  Hidden Size: {best_config['hidden_size']}")
+            print(f"  Num Layers: {best_config['num_layers']}")
+
+            # Apply best configuration to learning engine
+            if best_performance > 0.8:  # Only apply if good
+                self._apply_evolved_config(best_config)
+
+                # Save evolved agent
+                save_dir = Path(__file__).parent / "evolved_agents"
+                best_agent.save_to_disk(save_dir)
+
+                # Track evolution history
+                self.evolution_history.append({
+                    'cycle': self.cycle_count,
+                    'timestamp': time.time(),
+                    'best_performance': best_performance,
+                    'config': best_config,
+                    'agent_id': best_agent.dna.id
+                })
+
+                self.best_config = best_config
+
+                print("[Evolution] ✓ Configuration applied successfully")
+            else:
+                print("[Evolution] ✗ Performance too low, keeping current config")
+
+        except Exception as e:
+            print(f"[Evolution] Error during optimization: {e}")
+
+    def _apply_evolved_config(self, config: Dict):
+        """Apply evolved configuration to learning engine"""
+        # Update learning rate
+        if self.learning.model and self.learning.optimizer:
+            for param_group in self.learning.optimizer.param_groups:
+                param_group['lr'] = config['learning_rate']
+
+        # Note: Hidden size and num_layers would require rebuilding the model
+        # For now, we'll just track them for the next restart
+        self.learning.metrics.learning_rate = config['learning_rate']
+
+        print(f"[Evolution] Applied learning_rate = {config['learning_rate']:.6f}")
 
     def run_cycle(self):
         """Single iteration of the sentinel loop"""
@@ -522,7 +623,9 @@ class TheSentinel:
             'cycles': self.cycle_count,
             'cameras': [asdict(cam) for cam in self.cameras],
             'learning_metrics': asdict(self.learning.metrics),
-            'improvements': self.code_agent.improvement_history
+            'improvements': self.code_agent.improvement_history,
+            'evolution_history': self.evolution_history,
+            'best_config': self.best_config
         }
 
         output_path = Path(__file__).parent / "sentinel_state.json"
@@ -554,7 +657,15 @@ def main():
     print(f"Total Observations: {sentinel.learning.metrics.total_observations}")
     print(f"Model Updates: {sentinel.learning.metrics.model_updates}")
     print(f"Final Loss: {sentinel.learning.metrics.average_loss:.4f}")
-    print(f"Self-Improvements: {len(sentinel.code_agent.improvement_history)}")
+    print(f"Quick Improvements: {len(sentinel.code_agent.improvement_history)}")
+    print(f"Evolutionary Cycles: {len(sentinel.evolution_history)}")
+
+    if sentinel.best_config:
+        print(f"\nBest Evolved Configuration:")
+        print(f"  Learning Rate: {sentinel.best_config['learning_rate']:.6f}")
+        print(f"  Hidden Size: {sentinel.best_config['hidden_size']}")
+        print(f"  Num Layers: {sentinel.best_config['num_layers']}")
+
     print("=" * 60)
 
 
