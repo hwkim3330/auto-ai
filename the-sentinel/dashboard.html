@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Sentinel - Live Dashboard</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Courier New', monospace;
+            background: #0a0a0a;
+            color: #00ff00;
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            padding: 20px;
+            border: 2px solid #00ff00;
+            margin-bottom: 20px;
+            background: rgba(0, 255, 0, 0.05);
+        }
+
+        .header h1 {
+            font-size: 2em;
+            letter-spacing: 4px;
+            margin-bottom: 10px;
+        }
+
+        .status {
+            display: inline-block;
+            padding: 5px 15px;
+            background: rgba(0, 255, 0, 0.2);
+            border: 1px solid #00ff00;
+            margin-top: 10px;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .panel {
+            border: 1px solid #00ff00;
+            padding: 15px;
+            background: rgba(0, 255, 0, 0.02);
+        }
+
+        .panel h2 {
+            border-bottom: 1px solid #00ff00;
+            padding-bottom: 10px;
+            margin-bottom: 15px;
+            font-size: 1.2em;
+        }
+
+        .metric {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px dotted rgba(0, 255, 0, 0.3);
+        }
+
+        .metric:last-child {
+            border-bottom: none;
+        }
+
+        .metric-label {
+            color: #00cc00;
+        }
+
+        .metric-value {
+            font-weight: bold;
+            color: #00ff00;
+        }
+
+        .camera-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .camera {
+            border: 1px solid rgba(0, 255, 0, 0.5);
+            padding: 10px;
+            background: rgba(0, 0, 0, 0.5);
+        }
+
+        .camera-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 5px;
+        }
+
+        .camera-id {
+            font-weight: bold;
+        }
+
+        .camera-status {
+            font-size: 0.8em;
+        }
+
+        .camera-status.active {
+            color: #00ff00;
+        }
+
+        .camera-status.inactive {
+            color: #ff0000;
+        }
+
+        .log-container {
+            border: 1px solid #00ff00;
+            padding: 15px;
+            background: rgba(0, 0, 0, 0.8);
+            height: 300px;
+            overflow-y: auto;
+        }
+
+        .log-entry {
+            padding: 5px 0;
+            font-size: 0.9em;
+        }
+
+        .log-timestamp {
+            color: #00aa00;
+            margin-right: 10px;
+        }
+
+        .log-level {
+            margin-right: 10px;
+            padding: 2px 6px;
+            background: rgba(0, 255, 0, 0.2);
+        }
+
+        .chart-container {
+            height: 200px;
+            border: 1px solid rgba(0, 255, 0, 0.3);
+            margin-top: 10px;
+            position: relative;
+        }
+
+        .chart {
+            width: 100%;
+            height: 100%;
+        }
+
+        .improvement-list {
+            max-height: 200px;
+            overflow-y: auto;
+        }
+
+        .improvement-item {
+            padding: 10px;
+            margin: 5px 0;
+            border: 1px solid rgba(0, 255, 0, 0.3);
+            background: rgba(0, 255, 0, 0.05);
+        }
+
+        .improvement-success {
+            border-color: #00ff00;
+        }
+
+        .improvement-failed {
+            border-color: #ff0000;
+            color: #ff6666;
+        }
+
+        @keyframes blink {
+            0%, 50% { opacity: 1; }
+            51%, 100% { opacity: 0.3; }
+        }
+
+        .blink {
+            animation: blink 1s infinite;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>⬢ THE SENTINEL ⬢</h1>
+        <p>Self-Learning Surveillance System</p>
+        <div class="status blink">● ACTIVE</div>
+    </div>
+
+    <div class="grid">
+        <div class="panel">
+            <h2>⚡ System Metrics</h2>
+            <div class="metric">
+                <span class="metric-label">Uptime:</span>
+                <span class="metric-value" id="uptime">--:--:--</span>
+            </div>
+            <div class="metric">
+                <span class="metric-label">Cycle Count:</span>
+                <span class="metric-value" id="cycles">0</span>
+            </div>
+            <div class="metric">
+                <span class="metric-label">Total Observations:</span>
+                <span class="metric-value" id="observations">0</span>
+            </div>
+            <div class="metric">
+                <span class="metric-label">Model Updates:</span>
+                <span class="metric-value" id="updates">0</span>
+            </div>
+            <div class="metric">
+                <span class="metric-label">Average Loss:</span>
+                <span class="metric-value" id="loss">0.0000</span>
+            </div>
+        </div>
+
+        <div class="panel">
+            <h2>📹 Camera Feeds</h2>
+            <div class="camera-grid" id="camera-grid">
+                <!-- Cameras populated by JS -->
+            </div>
+        </div>
+
+        <div class="panel">
+            <h2>🧠 Learning Engine</h2>
+            <div class="metric">
+                <span class="metric-label">Learning Rate:</span>
+                <span class="metric-value" id="lr">0.001</span>
+            </div>
+            <div class="metric">
+                <span class="metric-label">Buffer Size:</span>
+                <span class="metric-value" id="buffer">0</span>
+            </div>
+            <div class="metric">
+                <span class="metric-label">Parameters:</span>
+                <span class="metric-value" id="params">0</span>
+            </div>
+            <div class="chart-container">
+                <canvas id="loss-chart" class="chart"></canvas>
+            </div>
+        </div>
+
+        <div class="panel">
+            <h2>🔧 Self-Improvements</h2>
+            <div class="improvement-list" id="improvements">
+                <p style="color: #00aa00;">Waiting for improvements...</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="panel">
+        <h2>📋 System Log</h2>
+        <div class="log-container" id="log">
+            <div class="log-entry">
+                <span class="log-timestamp">[00:00:00]</span>
+                <span class="log-level">[INFO]</span>
+                Dashboard initialized
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Simulated data - in production, fetch from sentinel via WebSocket/API
+        let startTime = Date.now();
+        let cycleCount = 0;
+        let observations = 0;
+        let updates = 0;
+        let lossHistory = [];
+
+        // Initialize cameras
+        const cameras = [
+            { id: 'CAM_001', location: 'Main Entrance', active: true },
+            { id: 'CAM_002', location: 'Parking Lot', active: true },
+            { id: 'CAM_003', location: 'Server Room', active: true },
+            { id: 'CAM_004', location: 'Emergency Exit', active: true }
+        ];
+
+        function initCameras() {
+            const grid = document.getElementById('camera-grid');
+            cameras.forEach(cam => {
+                const div = document.createElement('div');
+                div.className = 'camera';
+                div.innerHTML = `
+                    <div class="camera-header">
+                        <span class="camera-id">${cam.id}</span>
+                        <span class="camera-status ${cam.active ? 'active' : 'inactive'}">
+                            ${cam.active ? '● ACTIVE' : '○ OFFLINE'}
+                        </span>
+                    </div>
+                    <div style="font-size: 0.8em; color: #00aa00;">
+                        ${cam.location}
+                    </div>
+                `;
+                grid.appendChild(div);
+            });
+        }
+
+        function updateMetrics() {
+            // Simulate sentinel running
+            cycleCount++;
+            observations += cameras.filter(c => c.active).length;
+
+            if (cycleCount % 10 === 0) {
+                updates++;
+                const loss = Math.max(0.1, 0.9 - (updates * 0.01)) + Math.random() * 0.05;
+                lossHistory.push(loss);
+                if (lossHistory.length > 50) lossHistory.shift();
+                updateChart();
+            }
+
+            // Update UI
+            const uptime = Math.floor((Date.now() - startTime) / 1000);
+            const hours = Math.floor(uptime / 3600);
+            const minutes = Math.floor((uptime % 3600) / 60);
+            const seconds = uptime % 60;
+
+            document.getElementById('uptime').textContent =
+                `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+            document.getElementById('cycles').textContent = cycleCount;
+            document.getElementById('observations').textContent = observations;
+            document.getElementById('updates').textContent = updates;
+            document.getElementById('loss').textContent =
+                lossHistory.length > 0 ? lossHistory[lossHistory.length - 1].toFixed(4) : '0.0000';
+            document.getElementById('buffer').textContent = Math.min(observations, 100);
+
+            // Log
+            if (cycleCount % 20 === 0) {
+                addLog('INFO', `Cycle ${cycleCount} complete | Observations: ${observations}`);
+            }
+
+            // Self-improvement
+            if (cycleCount % 100 === 0) {
+                addImprovement(true, 'Reduced learning rate by 50%');
+                addLog('IMPROVE', 'Applied self-improvement: learning rate optimization');
+            }
+        }
+
+        function addLog(level, message) {
+            const log = document.getElementById('log');
+            const entry = document.createElement('div');
+            entry.className = 'log-entry';
+
+            const now = new Date();
+            const timestamp = `${String(now.getHours()).padStart(2, '0')}:` +
+                            `${String(now.getMinutes()).padStart(2, '0')}:` +
+                            `${String(now.getSeconds()).padStart(2, '0')}`;
+
+            entry.innerHTML = `
+                <span class="log-timestamp">[${timestamp}]</span>
+                <span class="log-level">[${level}]</span>
+                ${message}
+            `;
+
+            log.insertBefore(entry, log.firstChild);
+
+            // Keep only last 100 entries
+            while (log.children.length > 100) {
+                log.removeChild(log.lastChild);
+            }
+        }
+
+        function addImprovement(success, description) {
+            const container = document.getElementById('improvements');
+
+            // Clear placeholder
+            if (container.children[0]?.tagName === 'P') {
+                container.innerHTML = '';
+            }
+
+            const item = document.createElement('div');
+            item.className = `improvement-item ${success ? 'improvement-success' : 'improvement-failed'}`;
+
+            const timestamp = new Date().toLocaleTimeString();
+            item.innerHTML = `
+                <div style="font-size: 0.8em; margin-bottom: 5px;">${timestamp}</div>
+                <div>${success ? '✓' : '✗'} ${description}</div>
+            `;
+
+            container.insertBefore(item, container.firstChild);
+
+            // Keep only last 10
+            while (container.children.length > 10) {
+                container.removeChild(container.lastChild);
+            }
+        }
+
+        // Simple ASCII chart
+        function updateChart() {
+            const canvas = document.getElementById('loss-chart');
+            const ctx = canvas.getContext('2d');
+
+            // Set canvas size
+            canvas.width = canvas.offsetWidth;
+            canvas.height = canvas.offsetHeight;
+
+            // Clear
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            if (lossHistory.length < 2) return;
+
+            // Draw grid
+            ctx.strokeStyle = 'rgba(0, 255, 0, 0.1)';
+            ctx.lineWidth = 1;
+            for (let i = 0; i < 5; i++) {
+                const y = (canvas.height / 4) * i;
+                ctx.beginPath();
+                ctx.moveTo(0, y);
+                ctx.lineTo(canvas.width, y);
+                ctx.stroke();
+            }
+
+            // Draw loss curve
+            const maxLoss = Math.max(...lossHistory);
+            const minLoss = Math.min(...lossHistory);
+            const range = maxLoss - minLoss || 1;
+
+            ctx.strokeStyle = '#00ff00';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+
+            lossHistory.forEach((loss, i) => {
+                const x = (i / (lossHistory.length - 1)) * canvas.width;
+                const y = canvas.height - ((loss - minLoss) / range) * canvas.height * 0.9;
+
+                if (i === 0) {
+                    ctx.moveTo(x, y);
+                } else {
+                    ctx.lineTo(x, y);
+                }
+            });
+
+            ctx.stroke();
+
+            // Draw labels
+            ctx.fillStyle = '#00aa00';
+            ctx.font = '10px Courier New';
+            ctx.fillText(`Max: ${maxLoss.toFixed(3)}`, 5, 15);
+            ctx.fillText(`Min: ${minLoss.toFixed(3)}`, 5, canvas.height - 5);
+        }
+
+        // Initialize
+        initCameras();
+        document.getElementById('params').textContent = '62,304';
+        addLog('SYSTEM', 'The Sentinel initialized');
+        addLog('VISION', '4 cameras online');
+        addLog('LEARNING', 'Liquid NN loaded: 62,304 parameters');
+
+        // Update loop
+        setInterval(updateMetrics, 100);  // 10 Hz
+    </script>
+</body>
+</html>

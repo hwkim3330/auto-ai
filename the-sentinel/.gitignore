@@ -1,0 +1,30 @@
+venv/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+
+# Model checkpoints
+*.pt
+*.pth
+best_model.pt
+
+# State files
+sentinel_state.json
+
+# Logs
+*.log
+
+# Environment
+.env
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# System
+.DS_Store
+Thumbs.db
