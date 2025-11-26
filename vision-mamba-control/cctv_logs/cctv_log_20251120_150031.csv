@@ -1,0 +1,1 @@
+timestamp,person_id,bbox_x,bbox_y,bbox_w,bbox_h,distance_m,height_m,pos_x,pos_y,pos_z,confidence,is_loitering,is_close_alert

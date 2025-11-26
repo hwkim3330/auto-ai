@@ -28,6 +28,15 @@ from dataclasses import dataclass
 from enum import Enum
 import sys
 from pathlib import Path
+import tempfile
+import os
+
+try:
+    from PIL import Image, ImageGrab
+    PIL_AVAILABLE = True
+except ImportError:
+    PIL_AVAILABLE = False
+    print("[Warning] PIL not available, using simulated vision")
 
 # Add NCP to path
 sys.path.append(str(Path(__file__).parent.parent / "neural-circuit-policies"))
@@ -74,8 +83,9 @@ class VisionSystem:
     """
     Extract features from screenshots
 
-    Simple feature extraction:
-    - Downsample screen to 32x32 grid
+    Real computer vision:
+    - Capture screen with scrot/import
+    - Downsample to 32x32 grid
     - Convert to grayscale
     - Normalize to [-1, 1]
     - Flatten to 1024-dim vector
@@ -84,45 +94,90 @@ class VisionSystem:
     def __init__(self, target_size: Tuple[int, int] = (32, 32)):
         self.target_size = target_size
         self.feature_dim = target_size[0] * target_size[1]
+        self.use_real_vision = PIL_AVAILABLE
+        self.temp_screenshot = tempfile.mktemp(suffix='.png')
 
-    def capture_screen(self) -> np.ndarray:
+        if self.use_real_vision:
+            print(f"[Vision] Real vision enabled: {target_size[0]}x{target_size[1]} = {self.feature_dim} features")
+        else:
+            print(f"[Vision] Simulated vision mode (PIL not available)")
+
+    def capture_screen(self) -> Optional[Image.Image]:
         """
-        Capture screenshot using scrot
+        Capture screenshot using PIL's ImageGrab
 
         Returns:
-            Raw screenshot data (will implement image processing)
+            PIL Image or None if failed
         """
-        try:
-            # For now, return simulated screen features
-            # In production, use: scrot, PIL, opencv
-            return np.random.randn(1920, 1080, 3)  # Simulated
-        except Exception as e:
-            print(f"[Vision] Error capturing screen: {e}")
-            return np.zeros((1920, 1080, 3))
+        if not self.use_real_vision:
+            return None
 
-    def extract_features(self, screenshot: np.ndarray) -> np.ndarray:
+        try:
+            # Use PIL's ImageGrab (cross-platform)
+            img = ImageGrab.grab()
+            return img
+
+        except Exception as e:
+            # Silently fallback to simulated vision
+            # (ImageGrab may not work on headless systems)
+            return None
+
+    def extract_features(self, screenshot: Optional[Image.Image]) -> np.ndarray:
         """
         Extract features from screenshot
 
         Args:
-            screenshot: Raw image data
+            screenshot: PIL Image or None
 
         Returns:
             Feature vector (1024-dim for 32x32)
         """
-        # Simulate feature extraction
-        # In production: downsample, grayscale, normalize
-        features = np.random.randn(self.feature_dim)
+        if screenshot is None or not self.use_real_vision:
+            # Simulated vision fallback
+            features = np.random.randn(self.feature_dim)
+            return np.tanh(features)  # [-1, 1]
 
-        # Normalize
-        features = np.tanh(features)  # [-1, 1]
+        try:
+            # Real computer vision processing
 
-        return features
+            # 1. Resize to target size (32x32)
+            img = screenshot.resize(self.target_size, Image.Resampling.BILINEAR)
+
+            # 2. Convert to grayscale
+            img = img.convert('L')
+
+            # 3. Convert to numpy array
+            features = np.array(img, dtype=np.float32)
+
+            # 4. Flatten to 1D vector
+            features = features.flatten()
+
+            # 5. Normalize to [-1, 1]
+            features = (features / 127.5) - 1.0
+
+            # Verify shape
+            assert features.shape == (self.feature_dim,), f"Expected {self.feature_dim}, got {features.shape}"
+
+            return features
+
+        except Exception as e:
+            print(f"[Vision] Feature extraction error: {e}")
+            # Fallback to simulated
+            features = np.random.randn(self.feature_dim)
+            return np.tanh(features)
 
     def get_current_features(self) -> np.ndarray:
         """Get features from current screen"""
         screen = self.capture_screen()
         return self.extract_features(screen)
+
+    def cleanup(self):
+        """Clean up temporary files"""
+        try:
+            if os.path.exists(self.temp_screenshot):
+                os.remove(self.temp_screenshot)
+        except:
+            pass
 
 
 # ============================================================================

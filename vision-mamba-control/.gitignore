@@ -1,0 +1,92 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+pip-wheel-metadata/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# Virtual Environment
+venv/
+ENV/
+env/
+.venv
+
+# Environment Variables - NEVER COMMIT!
+.env
+.env.local
+.env.*.local
+
+# API Keys & Secrets
+*.pem
+*.key
+*.crt
+secrets/
+credentials/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Model Weights (too large for git)
+*.pt
+*.pth
+*.ckpt
+*.safetensors
+models/yolov8n.pt
+models/depth_anything_v3.pth
+
+# Logs
+*.log
+logs/
+depth_log.json
+depth_log_*.json
+
+# Temporary files
+temp/
+tmp/
+*.tmp
+*.cache
+
+# OS
+Thumbs.db
+.DS_Store
+
+# Database
+*.db
+*.sqlite
+*.sqlite3
+
+# Media files (if generated)
+screenshots/
+recordings/
+output/
+
+# Test results
+test_results/
+cbs_test_*/
+tas_test_*/
+pytest_cache/
+.coverage
+htmlcov/

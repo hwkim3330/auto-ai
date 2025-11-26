@@ -1,0 +1,75 @@
+# Vision Pro Configuration File
+
+# Server Settings
+server:
+  host: "0.0.0.0"
+  port: 8080
+  debug: false
+
+# Vision System
+vision:
+  # Device: 'cpu' or 'cuda'
+  device: 'cpu'
+
+  # YOLO Model
+  yolo:
+    size: 'n'  # n, s, m, l, x
+    confidence: 0.25
+    detect_all: true  # Detect all 80 COCO classes
+
+  # Depth Estimation
+  depth:
+    model_size: 'small'  # small, base, large
+    interval: 50  # Run depth every N frames
+
+  # Object Detection
+  detection:
+    interval: 5  # Run detection every N frames
+
+  # Temporal Smoothing
+  temporal:
+    enabled: true
+    history_size: 5
+    confidence_alpha: 0.7  # 0-1, higher = less smoothing
+    bbox_alpha: 0.6
+    min_persistence_frames: 3
+
+  # Confidence Filtering
+  filtering:
+    enabled: true
+    base_threshold: 0.35
+    hysteresis: 0.1  # ±margin
+
+# Webcam Settings
+webcam:
+  camera_id: 0
+  width: 640
+  height: 480
+  fps: 30
+
+# Logging
+logging:
+  dir: 'logs'
+  csv: true
+  json: true
+  json_buffer_size: 100  # Save JSON every N entries
+  terminal_log_interval: 1.0  # seconds
+
+# Performance
+performance:
+  max_consecutive_errors: 10
+  error_sleep_time: 0.1  # seconds
+  frame_skip_on_slow: true
+  target_fps: 30
+
+# UI Settings
+ui:
+  detection_log_max_entries: 50
+  log_update_interval: 1000  # ms
+  stats_update_interval: 100  # ms
+
+# Alerts
+alerts:
+  loitering_threshold: 10  # seconds
+  close_person_threshold: 1.5  # meters
+  enable_sound: false
