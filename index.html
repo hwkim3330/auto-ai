@@ -1,286 +1,370 @@
 <!DOCTYPE html>
-<html lang="ko">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Auto-AI - AI 기반 업무 자동화 플랫폼. 자동으로 굴러가는 회사를 만듭니다.">
-    <meta name="keywords" content="AI, 자동화, 업무자동화, Gemini, 비즈니스">
-    <title>Auto-AI - Business Automation Platform</title>
-    <link rel="stylesheet" href="assets/css/style.css">
+    <title>Kim Hyunwoo - AGI Research</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 680px;
+            margin: 0 auto;
+            padding: 80px 20px;
+            background: #fff;
+        }
+
+        h1 {
+            font-size: 32px;
+            font-weight: 600;
+            margin-bottom: 8px;
+            letter-spacing: -0.5px;
+        }
+
+        .subtitle {
+            font-size: 18px;
+            color: #666;
+            margin-bottom: 40px;
+        }
+
+        .bio {
+            font-size: 16px;
+            color: #555;
+            margin-bottom: 60px;
+            line-height: 1.7;
+        }
+
+        .bio a {
+            color: #0066cc;
+            text-decoration: none;
+            border-bottom: 1px solid #0066cc;
+        }
+
+        .bio a:hover {
+            color: #0052a3;
+            border-bottom-color: #0052a3;
+        }
+
+        h2 {
+            font-size: 24px;
+            font-weight: 600;
+            margin-top: 60px;
+            margin-bottom: 30px;
+            letter-spacing: -0.3px;
+        }
+
+        .projects {
+            list-style: none;
+        }
+
+        .project {
+            margin-bottom: 40px;
+            padding-bottom: 40px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .project:last-child {
+            border-bottom: none;
+        }
+
+        .project-title {
+            font-size: 20px;
+            font-weight: 600;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .project-title .icon {
+            font-size: 24px;
+        }
+
+        .project-meta {
+            font-size: 14px;
+            color: #999;
+            margin-bottom: 12px;
+        }
+
+        .project-description {
+            font-size: 16px;
+            color: #555;
+            margin-bottom: 12px;
+            line-height: 1.7;
+        }
+
+        .project-stats {
+            display: flex;
+            gap: 20px;
+            margin-top: 12px;
+        }
+
+        .stat {
+            font-size: 14px;
+            color: #666;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .stat-value {
+            font-weight: 600;
+            color: #333;
+        }
+
+        .project-link {
+            display: inline-block;
+            margin-top: 12px;
+            color: #0066cc;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .project-link:hover {
+            text-decoration: underline;
+        }
+
+        .footer {
+            margin-top: 80px;
+            padding-top: 40px;
+            border-top: 1px solid #eee;
+            font-size: 14px;
+            color: #999;
+        }
+
+        .footer a {
+            color: #666;
+            text-decoration: none;
+            margin-right: 20px;
+        }
+
+        .footer a:hover {
+            color: #333;
+        }
+
+        .tag {
+            display: inline-block;
+            padding: 4px 10px;
+            background: #f5f5f5;
+            border-radius: 12px;
+            font-size: 12px;
+            color: #666;
+            margin-right: 6px;
+            margin-top: 8px;
+        }
+
+        .highlight {
+            background: linear-gradient(to right, #ff6b6b, #ee5a6f);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        @media (max-width: 600px) {
+            body {
+                padding: 40px 20px;
+            }
+
+            h1 {
+                font-size: 28px;
+            }
+
+            .subtitle {
+                font-size: 16px;
+            }
+        }
+    </style>
 </head>
 <body>
-    <div class="container">
-        <header>
-            <h1>🤖 Auto-AI</h1>
-            <p class="subtitle">자동으로 굴러가는 회사 - AI 기반 업무 자동화 플랫폼</p>
-            <div class="header-buttons">
-                <a href="https://github.com/hwkim3330/auto-ai" target="_blank" class="btn-primary">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
-                        <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
-                    </svg>
-                    GitHub
-                </a>
-                <button onclick="scrollToDemo()" class="btn-secondary">데모 보기</button>
-            </div>
-        </header>
+    <h1>Kim Hyunwoo</h1>
+    <p class="subtitle">AGI Researcher & Builder</p>
 
-        <section class="features-section">
-            <h2>🎯 핵심 기능</h2>
-            <div class="features-grid">
-                <div class="feature-card">
-                    <div class="feature-icon">📊</div>
-                    <h3>문서 자동화</h3>
-                    <p>보고서, 이메일, 회의록을 AI가 자동으로 생성합니다.</p>
-                    <ul>
-                        <li>일일/주간/월간 보고서</li>
-                        <li>이메일 자동 작성</li>
-                        <li>회의록 자동 생성</li>
-                        <li>제안서 작성</li>
-                    </ul>
-                </div>
-
-                <div class="feature-card">
-                    <div class="feature-icon">⚙️</div>
-                    <h3>업무 플로우 자동화</h3>
-                    <p>반복적인 업무를 자동화하여 생산성을 극대화합니다.</p>
-                    <ul>
-                        <li>스케줄 기반 자동 실행</li>
-                        <li>프로젝트 관리 자동화</li>
-                        <li>승인 프로세스 자동화</li>
-                        <li>마감일 자동 관리</li>
-                    </ul>
-                </div>
-
-                <div class="feature-card">
-                    <div class="feature-icon">📈</div>
-                    <h3>데이터 분석</h3>
-                    <p>비즈니스 데이터를 자동으로 분석하고 인사이트를 제공합니다.</p>
-                    <ul>
-                        <li>매출 데이터 분석</li>
-                        <li>트렌드 예측</li>
-                        <li>대시보드 자동 생성</li>
-                        <li>이상 탐지 및 알림</li>
-                    </ul>
-                </div>
-
-                <div class="feature-card">
-                    <div class="feature-icon">💬</div>
-                    <h3>커뮤니케이션 자동화</h3>
-                    <p>이메일, 메신저 등 커뮤니케이션을 자동화합니다.</p>
-                    <ul>
-                        <li>이메일 자동 응답</li>
-                        <li>Slack/Teams 통합</li>
-                        <li>회의 일정 조율</li>
-                        <li>알림 자동 발송</li>
-                    </ul>
-                </div>
-
-                <div class="feature-card">
-                    <div class="feature-icon">🤖</div>
-                    <h3>AI 의사결정 지원</h3>
-                    <p>AI가 데이터를 분석하여 최적의 의사결정을 제안합니다.</p>
-                    <ul>
-                        <li>시나리오 시뮬레이션</li>
-                        <li>리스크 분석</li>
-                        <li>최적화 솔루션</li>
-                        <li>예측 모델링</li>
-                    </ul>
-                </div>
-
-                <div class="feature-card">
-                    <div class="feature-icon">🔒</div>
-                    <h3>보안 & 모니터링</h3>
-                    <p>안전하고 투명한 자동화 시스템을 제공합니다.</p>
-                    <ul>
-                        <li>실시간 모니터링</li>
-                        <li>감사 로그</li>
-                        <li>권한 관리</li>
-                        <li>데이터 암호화</li>
-                    </ul>
-                </div>
-            </div>
-        </section>
-
-        <section class="demo-section" id="demo">
-            <h2>🎮 라이브 데모</h2>
-            <p class="demo-description">실제로 AI 자동화를 체험해보세요 (데모 모드)</p>
-
-            <div class="demo-container">
-                <div class="demo-panel">
-                    <h3>💬 AI 챗봇</h3>
-                    <div class="chat-container">
-                        <div id="chat-messages" class="chat-messages">
-                            <div class="chat-message ai">
-                                안녕하세요! Auto-AI 데모 챗봇입니다. 무엇을 도와드릴까요?
-                            </div>
-                        </div>
-                        <div class="chat-input-container">
-                            <input
-                                type="text"
-                                id="chat-input"
-                                placeholder="메시지를 입력하세요..."
-                                class="chat-input"
-                            >
-                            <button onclick="sendDemoMessage()" class="btn-primary">전송</button>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="demo-panel">
-                    <h3>📊 자동 보고서 생성</h3>
-                    <div class="report-generator">
-                        <div class="input-group">
-                            <label>매출액 (원):</label>
-                            <input type="number" id="sales" value="15000000" class="demo-input">
-                        </div>
-                        <div class="input-group">
-                            <label>신규 고객 수:</label>
-                            <input type="number" id="customers" value="45" class="demo-input">
-                        </div>
-                        <div class="input-group">
-                            <label>완료된 작업:</label>
-                            <input type="number" id="tasks" value="23" class="demo-input">
-                        </div>
-                        <button onclick="generateDemoReport()" class="btn-primary full-width">
-                            📝 일일 보고서 생성
-                        </button>
-                        <div id="report-output" class="output-area"></div>
-                    </div>
-                </div>
-
-                <div class="demo-panel">
-                    <h3>📧 이메일 자동 작성</h3>
-                    <div class="email-generator">
-                        <div class="input-group">
-                            <label>목적:</label>
-                            <select id="email-purpose" class="demo-input">
-                                <option value="프로젝트 제안">프로젝트 제안</option>
-                                <option value="회의 요청">회의 요청</option>
-                                <option value="진행 상황 보고">진행 상황 보고</option>
-                                <option value="감사 인사">감사 인사</option>
-                            </select>
-                        </div>
-                        <div class="input-group">
-                            <label>수신자:</label>
-                            <input type="text" id="recipient" value="김대리" class="demo-input">
-                        </div>
-                        <button onclick="generateDemoEmail()" class="btn-primary full-width">
-                            ✉️ 이메일 생성
-                        </button>
-                        <div id="email-output" class="output-area"></div>
-                    </div>
-                </div>
-
-                <div class="demo-panel">
-                    <h3>⏰ 예정된 자동화 작업</h3>
-                    <div class="tasks-list">
-                        <div class="task-item">
-                            <div class="task-icon">📊</div>
-                            <div class="task-info">
-                                <h4>일일 아침 브리핑</h4>
-                                <p>매일 오전 9:00</p>
-                                <span class="task-status active">활성</span>
-                            </div>
-                        </div>
-                        <div class="task-item">
-                            <div class="task-icon">📧</div>
-                            <div class="task-info">
-                                <h4>이메일 자동 분류</h4>
-                                <p>매 30분마다</p>
-                                <span class="task-status active">활성</span>
-                            </div>
-                        </div>
-                        <div class="task-item">
-                            <div class="task-icon">📝</div>
-                            <div class="task-info">
-                                <h4>주간 리포트 생성</h4>
-                                <p>매주 월요일 10:00</p>
-                                <span class="task-status active">활성</span>
-                            </div>
-                        </div>
-                        <div class="task-item">
-                            <div class="task-icon">📈</div>
-                            <div class="task-info">
-                                <h4>월간 성과 분석</h4>
-                                <p>매월 1일 10:00</p>
-                                <span class="task-status active">활성</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <section class="tech-section">
-            <h2>🔧 기술 스택</h2>
-            <div class="tech-grid">
-                <div class="tech-item">
-                    <h3>AI/ML</h3>
-                    <p>Google Gemini API</p>
-                </div>
-                <div class="tech-item">
-                    <h3>Backend</h3>
-                    <p>Python, FastAPI</p>
-                </div>
-                <div class="tech-item">
-                    <h3>Frontend</h3>
-                    <p>HTML5, CSS3, JavaScript</p>
-                </div>
-                <div class="tech-item">
-                    <h3>Automation</h3>
-                    <p>APScheduler</p>
-                </div>
-            </div>
-        </section>
-
-        <section class="install-section">
-            <h2>🚀 설치 및 실행</h2>
-            <div class="code-block">
-                <pre><code># 저장소 클론
-git clone https://github.com/hwkim3330/auto-ai.git
-cd auto-ai
-
-# 의존성 설치
-pip install -r requirements.txt
-
-# 설정 파일 생성
-cp config/config.example.yaml config/config.yaml
-# config.yaml에 Gemini API 키 입력
-
-# 서버 실행
-python src/main.py
-
-# 브라우저에서 접속
-# http://localhost:8000</code></pre>
-            </div>
-        </section>
-
-        <section class="cta-section">
-            <h2>지금 바로 시작하세요</h2>
-            <p>AI가 만드는 자동화된 업무 환경을 경험해보세요</p>
-            <div class="cta-buttons">
-                <a href="https://github.com/hwkim3330/auto-ai" target="_blank" class="btn-large btn-primary">
-                    GitHub에서 보기
-                </a>
-                <button onclick="scrollToDemo()" class="btn-large btn-secondary">
-                    데모 체험하기
-                </button>
-            </div>
-        </section>
-
-        <footer>
-            <div class="footer-content">
-                <p>🤖 <strong>Auto-AI</strong> - AI가 AI를 만들어 사람을 자유롭게 합니다</p>
-                <p class="footer-links">
-                    <a href="https://github.com/hwkim3330/auto-ai" target="_blank">GitHub</a> •
-                    <a href="https://github.com/hwkim3330/auto-ai/issues" target="_blank">Issues</a> •
-                    <a href="#demo">Demo</a>
-                </p>
-                <p class="copyright">© 2025 Auto-AI. MIT License.</p>
-            </div>
-        </footer>
+    <div class="bio">
+        <p>
+            Building <span class="highlight">complete AGI systems</span> from scratch using open-source tools.
+            Focused on embodied agents, emotion-driven learning, and self-supervised systems.
+        </p>
+        <p style="margin-top: 16px;">
+            Based in Seoul, Korea. Previously worked on TSN networking and real-time systems.
+        </p>
     </div>
 
-    <script src="assets/js/demo.js"></script>
+    <h2>Projects</h2>
+
+    <ul class="projects">
+        <li class="project">
+            <div class="project-title">
+                <span class="icon">🎮</span>
+                SIMA-style Embodied Agent
+            </div>
+            <div class="project-meta">November 2025 · 2,662 lines</div>
+            <p class="project-description">
+                Complete open-source implementation of SIMA2-style embodied AGI.
+                Multi-environment agent that learns from games and simulators using LLM planning,
+                episodic/semantic memory, and self-supervised evaluation.
+            </p>
+            <div class="project-stats">
+                <span class="stat"><span class="stat-value">5</span> modules</span>
+                <span class="stat"><span class="stat-value">7</span> environments</span>
+                <span class="stat"><span class="stat-value">Self-eval</span> via LLM</span>
+            </div>
+            <div>
+                <span class="tag">LLM Planning</span>
+                <span class="tag">Memory System</span>
+                <span class="tag">Multi-env</span>
+                <span class="tag">Self-supervised</span>
+            </div>
+            <a href="embodied-sima-agent/README.md" class="project-link">Read more →</a>
+        </li>
+
+        <li class="project">
+            <div class="project-title">
+                <span class="icon">💖</span>
+                Emotional AGI
+            </div>
+            <div class="project-meta">November 2025 · 812 lines</div>
+            <p class="project-description">
+                AGI with 7 emotions (curiosity, wonder, joy, frustration, satisfaction, surprise, calm)
+                that learns until emotionally satisfied. No infinite loops - stops automatically when
+                satisfied or too frustrated.
+            </p>
+            <div class="project-stats">
+                <span class="stat"><span class="stat-value">7</span> emotions</span>
+                <span class="stat"><span class="stat-value">Auto-stop</span> when satisfied</span>
+                <span class="stat"><span class="stat-value">5 cycles</span> demo (not infinite!)</span>
+            </div>
+            <div>
+                <span class="tag">Emotion Dynamics</span>
+                <span class="tag">Natural Termination</span>
+                <span class="tag">Wonder Expression</span>
+            </div>
+            <a href="emotional-agi/README.md" class="project-link">Read more →</a>
+        </li>
+
+        <li class="project">
+            <div class="project-title">
+                <span class="icon">💭</span>
+                Thinking Actor AGI
+            </div>
+            <div class="project-meta">November 2025 · 615 lines</div>
+            <p class="project-description">
+                AGI that thinks and acts simultaneously. Parses action commands from streaming
+                thought tokens and executes them in parallel. Includes HTTP API for remote control.
+            </p>
+            <div class="project-stats">
+                <span class="stat"><span class="stat-value">Parallel</span> think+act</span>
+                <span class="stat"><span class="stat-value">HTTP API</span> port 8888</span>
+                <span class="stat"><span class="stat-value">Real-time</span> SSE</span>
+            </div>
+            <div>
+                <span class="tag">Streaming AGI</span>
+                <span class="tag">Action Parsing</span>
+                <span class="tag">Remote Control</span>
+            </div>
+            <a href="thinking-actor-agi/README.md" class="project-link">Read more →</a>
+        </li>
+
+        <li class="project">
+            <div class="project-title">
+                <span class="icon">🖥️</span>
+                Computer Use Agent
+            </div>
+            <div class="project-meta">November 2025 · 450 lines</div>
+            <p class="project-description">
+                Agent that learns to use computers through vision and NCP (Neural Circuit Policies).
+                Real screenshot capture, 1024-dim visual features, biologically-inspired 1096-neuron brain.
+            </p>
+            <div class="project-stats">
+                <span class="stat"><span class="stat-value">Real vision</span> PIL</span>
+                <span class="stat"><span class="stat-value">1096</span> neurons</span>
+                <span class="stat"><span class="stat-value">10620</span> synapses</span>
+            </div>
+            <div>
+                <span class="tag">Computer Vision</span>
+                <span class="tag">NCP Brain</span>
+                <span class="tag">Keyboard/Mouse</span>
+            </div>
+            <a href="computer-use-ncp/README.md" class="project-link">Read more →</a>
+        </li>
+
+        <li class="project">
+            <div class="project-title">
+                <span class="icon">🧠</span>
+                Streaming Continuous AGI
+            </div>
+            <div class="project-meta">November 2025 · 380 lines</div>
+            <p class="project-description">
+                Token-by-token thinking AGI with parallel reasoning paths. Uses Ollama for local
+                LLM inference. Supports multi-depth thinking and real-time streaming output.
+            </p>
+            <div class="project-stats">
+                <span class="stat"><span class="stat-value">Ollama</span> qwen2.5:3b</span>
+                <span class="stat"><span class="stat-value">Parallel</span> reasoning</span>
+                <span class="stat"><span class="stat-value">Streaming</span> tokens</span>
+            </div>
+            <div>
+                <span class="tag">LLM Reasoning</span>
+                <span class="tag">Multi-depth</span>
+                <span class="tag">Local Inference</span>
+            </div>
+            <a href="streaming-agi/README.md" class="project-link">Read more →</a>
+        </li>
+
+        <li class="project">
+            <div class="project-title">
+                <span class="icon">🦠</span>
+                Neural Circuit Policies
+            </div>
+            <div class="project-meta">November 2025 · 320 lines</div>
+            <p class="project-description">
+                Sparse, interpretable neural networks inspired by C. elegans (302 neurons).
+                Biologically realistic wiring with liquid time-constant dynamics. 10x fewer parameters
+                than dense networks.
+            </p>
+            <div class="project-stats">
+                <span class="stat"><span class="stat-value">Sparse</span> wiring</span>
+                <span class="stat"><span class="stat-value">Interpretable</span> neurons</span>
+                <span class="stat"><span class="stat-value">Bio-inspired</span> C. elegans</span>
+            </div>
+            <div>
+                <span class="tag">Biological AI</span>
+                <span class="tag">Sparse Networks</span>
+                <span class="tag">Liquid Dynamics</span>
+            </div>
+            <a href="neural-circuit-policies/README.md" class="project-link">Read more →</a>
+        </li>
+    </ul>
+
+    <h2>Open Source</h2>
+    <p class="bio">
+        All projects are fully open-source and modular. Total ~5,200 lines of reusable AGI code.
+        Built with Python, Ollama, NumPy, and PIL. No proprietary APIs or cloud dependencies.
+    </p>
+
+    <div class="footer">
+        <a href="https://github.com/hwkim3330/auto-ai">GitHub</a>
+        <a href="mailto:hwkim3330@gmail.com">Email</a>
+        <a href="business-automation.html">Business Automation</a>
+    </div>
+
+    <script>
+        // Add smooth scroll
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                document.querySelector(this.getAttribute('href')).scrollIntoView({
+                    behavior: 'smooth'
+                });
+            });
+        });
+    </script>
 </body>
 </html>
