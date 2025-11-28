@@ -44,11 +44,13 @@ A **complete AGI system** built from scratch using only open-source tools. Unlik
 |-----------|---------|-------|-------------|
 | **Embodied SIMA Agent** | Multi-environment interaction | 2,662 | Complete SIMA2-style architecture |
 | **Emotional AGI** | Emotion-based learning | 812 | Natural termination (no infinite loops) |
+| **Unconscious Mind AGI** | Dual-mind system | 650 | Background processing + intuition |
 | **Thinking Actor AGI** | Parallel thinking + acting | 615 | Actions while thinking |
+| **Complete AGI API** | Claude API replacement | 550 | 100% free, local, open-source |
 | **Computer Use Agent** | Vision + computer control | 450 | Real screenshots |
 | **Streaming AGI** | Token-by-token reasoning | 380 | LLM-based planning |
 | **Neural Circuit Policies** | Biological neural substrate | 320 | 1096 neurons, C. elegans-inspired |
-| **TOTAL** | **Complete AGI** | **~5,200** | **Fully integrated** |
+| **TOTAL** | **Complete AGI** | **~6,400** | **Fully integrated** |
 
 ### Key Innovations
 
@@ -141,7 +143,73 @@ while not satisfied:
 
 ---
 
-### 3. Thinking Actor AGI
+### 3. Unconscious Mind AGI
+
+**Complete dual-mind system: Conscious + Unconscious**
+
+```bash
+cd unconscious-agi
+python3 unconscious_mind.py
+```
+
+**Key Innovation**:
+```python
+# Traditional AI: Only conscious reasoning
+response = llm.generate(query)
+
+# Our approach: Conscious + Unconscious
+mind = CompleteMind()
+mind.unconscious.start_background_processing()
+mind.think(query)  # Both working together!
+```
+
+**Features**:
+- Background processing (threading)
+- Intuition generation (pattern-based)
+- Pattern recognition (automatic)
+- Dream processing (memory consolidation)
+- Emergence to consciousness ("Aha!" moments)
+
+[Read more →](unconscious-agi/README.md)
+
+---
+
+### 4. Complete AGI API
+
+**100% Free Claude API replacement**
+
+```bash
+cd complete-agi-api
+python3 api_server.py
+# Server runs on http://localhost:8000
+```
+
+**Key Innovation**:
+```python
+# OLD: Claude API (costs $0.01-0.08 per request)
+import anthropic
+client = anthropic.Anthropic(api_key="sk-xxx")
+
+# NEW: Complete AGI API (100% FREE!)
+import requests
+response = requests.post(
+    "http://localhost:8000/v1/messages",
+    json={"model": "complete-agi-v1", "messages": [...]}
+)
+```
+
+**Features**:
+- Claude-compatible endpoints
+- 100% free (no API keys)
+- 100% local (no cloud)
+- Streaming support (SSE)
+- Emotion-based responses
+
+[Read more →](complete-agi-api/README.md)
+
+---
+
+### 5. Thinking Actor AGI
 
 **Think and act simultaneously (parallel execution)**
 
@@ -163,7 +231,7 @@ python3 remote_control_server.py  # HTTP API on port 8888
 
 ---
 
-### 4. Computer Use Agent
+### 6. Computer Use Agent
 
 **Real computer vision + biological neural brain**
 
@@ -182,7 +250,7 @@ python3 computer_agent.py
 
 ---
 
-### 5. Streaming AGI
+### 7. Streaming AGI
 
 **Token-by-token reasoning with parallel paths**
 
@@ -201,7 +269,7 @@ python3 streaming_continuous_agi.py
 
 ---
 
-### 6. Neural Circuit Policies
+### 8. Neural Circuit Policies
 
 **Biologically-inspired sparse neural networks**
 
